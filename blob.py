@@ -2,10 +2,12 @@ import numpy
 
 class Blob:
 
-    def __init__(self, dtype, shape):
+    def __init__(self, obj, dtype, shape):
         self.shape_ = shape
-        self.data_  = numpy.ones(shape, dtype)
-        self.diff_  = numpy.ones(shape, dtype)
+        self.data_  = numpy.array(obj, dtype)
+        self.diff_  = numpy.array(obj, dtype)
+        self.data_  = self.data_.reshape(shape)
+        self.diff_  = self.diff_.reshape(shape)
 
     def reshape(self, shape):
         self.shape_ = shape
@@ -40,7 +42,7 @@ class Blob:
         self.diff_ = self.diff_ * scale_factor
 
 if __name__ == '__main__':
-    blob = Blob(numpy.float, (5,6))
+    blob = Blob(range(30), numpy.float, (5,6))
     print blob.data_
     print blob.shape()
     blob.reshape((2,15))
