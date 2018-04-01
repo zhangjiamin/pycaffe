@@ -32,7 +32,7 @@ class Layer:
         return loss
 
     def Backward(self, top, propagate_down, bottom):
-        pass
+        self.Backward_cpu(top, propagate_down, bottom)
 
     def blobs(self):
         return self.blobs_
@@ -113,5 +113,5 @@ if __name__ == '__main__':
     print layer.type()
     layer.Setup([bottom], [top])
     print layer.Forward([bottom], [top])
-
+    print layer.Backward([top], [], [bottom])    
 
