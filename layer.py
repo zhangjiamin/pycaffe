@@ -41,7 +41,10 @@ class Layer:
         pass
 
     def loss(self, top_index):
-        return self.loss_[top_index]
+        if len(self.loss_) <= top_index:
+            return 0
+        else: 
+            return self.loss_[top_index]
 
     def set_loss(self, top_index, value):
         self.loss_[top_index] = value
@@ -109,6 +112,6 @@ if __name__ == '__main__':
     layer = Layer()
     print layer.type()
     layer.Setup([bottom], [top])
-    layer.Forward([bottom], [top])
+    print layer.Forward([bottom], [top])
 
 
