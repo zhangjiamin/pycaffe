@@ -9,7 +9,10 @@ class Layer:
         self.param_propagate_down_ = []
 
     def Setup(self, bottom, top):
-        pass
+        self.CheckBlobCounts(bottom, top)
+        self.LayerSetup(bottom, top)
+        self.Reshape(bottom, top)
+        self.SetLossWeights(top)
 
     def LayerSetup(self, bottom, top):
         pass
@@ -23,8 +26,8 @@ class Layer:
         self.Forward_cpu(bottom, top)
 
         for top_id in range(len(top)):
-            if 0 != self.loss(top_id)
-                loss = loss + numpy.dot(top[top_id].diff(), top[top_id].data)
+            if 0 != self.loss(top_id):
+                loss = loss + numpy.dot(top[top_id].diff(), top[top_id].data())
 
         return loss
 
@@ -32,16 +35,16 @@ class Layer:
         pass
 
     def blobs(self):
-        pass
+        return self.blobs_
 
     def layer_param(self):
         pass
 
     def loss(self, top_index):
-        pass
+        return self.loss_[top_index]
 
     def set_loss(self, top_index, value):
-        pass
+        self.loss_[top_index] = value
 
     def type(self):
         return ''
@@ -92,14 +95,20 @@ class Layer:
         pass
 
     def CheckBlobCounts(self, bottom, top):
-        pass
+        if self.ExactNumBottomBlobs() >= 0:
+            if len(bottom) != self.ExactNumBottomBlobs():
+                print self.type() + " Layer takes " + self.ExactNumBottomBlobs() + " bottom blob(s) as input."
 
     def SetLossWeights(self, top):
         pass
 
 
 if __name__ == '__main__':
-    blob  = Blob(numpy.float, (2,3))
+    bottom  = Blob(range(6), numpy.float, (2,3))
+    top     = Blob(range(6), numpy.float, (2,3))
     layer = Layer()
+    print layer.type()
+    layer.Setup([bottom], [top])
+    layer.Forward([bottom], [top])
 
 
