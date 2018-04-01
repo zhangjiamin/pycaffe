@@ -38,6 +38,12 @@ class Blob:
     def diff(self):
         return self.diff_
 
+    def set_data(self, data):
+        self.data_ = data
+
+    def set_diff(self, diff):
+        self.diff_ = diff
+
     def scale_data(self, scale_factor):
         self.data_ = self.data_ * scale_factor
 

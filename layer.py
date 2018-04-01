@@ -120,13 +120,34 @@ class NeuronLayer(Layer):
     def ExactNumTopBlobs(self):
         return 1
 
+class ExpLayer(NeuronLayer):
+
+    def __init__(self):
+        NeuronLayer.__init__(self)
+
+    def type(self):
+        return 'Exp'
+
+    def LayerSetup(self, bottom, top):
+        pass
+
+    def Forward_cpu(self, bottom, top):
+        top[0].set_data( numpy.exp(bottom[0].data()))
+
+    def Backward_cpu(self, top, propagate_down, bottom):
+        pass
+
+
 
 if __name__ == '__main__':
     bottom  = Blob(range(6), numpy.float, (2,3))
     top     = Blob(range(6), numpy.float, (2,3))
-    layer = NeuronLayer()
+    layer = ExpLayer()
     print layer.type()
     layer.Setup([bottom], [top])
     print layer.Forward([bottom], [top])
     print layer.Backward([top], [], [bottom])    
 
+    print bottom.data()
+    print top.data()
+    
