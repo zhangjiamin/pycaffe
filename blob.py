@@ -9,10 +9,13 @@ class Blob:
         self.data_  = self.data_.reshape(shape)
         self.diff_  = self.diff_.reshape(shape)
 
-    def reshape(self, shape):
+    def Reshape(self, shape):
         self.shape_ = shape
         self.data_  = numpy.reshape(self.data_, shape)
         self.diff_  = numpy.reshape(self.diff_, shape)
+
+    def ReshapeLike(self, other):
+        self.Reshape(other.shape())
 
     def shape_string(self):
         return str(self.shape_)
@@ -43,9 +46,11 @@ class Blob:
 
 if __name__ == '__main__':
     blob = Blob(range(30), numpy.float, (5,6))
+    othe = Blob(range(30), numpy.float, (6,5))
     print blob.data_
     print blob.shape()
-    blob.reshape((2,15))
+    blob.Reshape((2,15))
+    blob.ReshapeLike(othe)
     print blob.data_
     print blob.shape()
     print blob.shape_index(1)

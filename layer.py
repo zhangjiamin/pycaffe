@@ -106,10 +106,25 @@ class Layer:
         pass
 
 
+class NeuronLayer(Layer):
+
+    def __init__(self):
+        Layer.__init__(self)
+
+    def Reshape(self, bottom, top):
+        top[0].ReshapeLike(bottom[0])
+
+    def ExactNumBottomBlobs(self):
+        return 1
+
+    def ExactNumTopBlobs(self):
+        return 1
+
+
 if __name__ == '__main__':
     bottom  = Blob(range(6), numpy.float, (2,3))
     top     = Blob(range(6), numpy.float, (2,3))
-    layer = Layer()
+    layer = NeuronLayer()
     print layer.type()
     layer.Setup([bottom], [top])
     print layer.Forward([bottom], [top])
