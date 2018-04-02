@@ -1,6 +1,6 @@
 import unittest
 
-class TestBlob(unittest.TestCase):
+class TestLayer(unittest.TestCase):
 
     def setUp(self):
         pass

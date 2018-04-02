@@ -152,24 +152,74 @@ class ReLULayer(NeuronLayer):
     def Backward_cpu(self, top, propagate_down, bottom):
         bottom[0].set_diff((bottom[0].data()>0)*top[0].diff())
 
+
+class InnerProductLayer(Layer):
+
+    def __init__(self):
+        Layer.__init__(self)
+        self.M_ = None
+        self.K_ = None
+        self.N_ = None
+
+        self.bias_term_       = None
+        self.bias_multiplier_ = None
+        self.transpose_       = False
+
+    def LayerSetUp(self):
+        pass
+
+    def Reshape(self, bottom, top):
+        pass
+
+    def type(self):
+        return 'InnerProduct'
+
+    def ExactNumBottomBlobs(self):
+        return 1
+
+    def ExactNumTopBlobs(self):
+        return 1
+
+    def Forward_cpu(self, bottom, top):
+        top[0].set_data( numpy.maximum(bottom[0].data(), 0))
+
+    def Backward_cpu(self, top, propagate_down, bottom):
+        bottom[0].set_diff((bottom[0].data()>0)*top[0].diff())
+   
+
 if __name__ == '__main__':
     bottom  = Blob(numpy.float, (2,3))
     top     = Blob(numpy.float, (2,3))
+    top2    = Blob(numpy.float, (2,3))
 
     bottom.set_data([-2,-1,0,1,2,3])
     bottom.Reshape((2,3))
 
-    top.set_diff([-2,-1,0,1,2,5])
-    top.Reshape((2,3))
+    top2.set_diff([-2,-1,0,1,2,5])
+    top2.Reshape((2,3))
 
-    layer = ReLULayer()
-    print layer.type()
-    layer.Setup([bottom], [top])
-    print layer.Forward([bottom], [top])
-    print layer.Backward([top], [], [bottom])    
+    layer1 = ReLULayer()
+    layer1.Setup([bottom], [top])
+    layer1.Forward([bottom], [top])
 
+    layer2 = ExpLayer()
+    layer2.Setup([top], [top2])
+    layer2.Forward([top], [top2])
+
+    layer2.Backward([top2], [], [top])
+    layer1.Backward([top], [], [bottom])
+
+    print 'bottom'
     print bottom.data()
+    print 'top1'
     print top.data()
+    print 'top2'
+    print top2.data()
 
+    print 'top2.diff'
+    print top2.diff()
+    print 'top1.diff'
     print top.diff()
-    print bottom.diff()    
+    print 'bottom.diff'
+    print bottom.diff()
+
