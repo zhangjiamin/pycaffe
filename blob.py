@@ -2,17 +2,20 @@ import numpy
 
 class Blob:
 
-    def __init__(self, obj, dtype, shape):
+    def __init__(self, dtype, shape):
         self.shape_ = shape
-        self.data_  = numpy.array(obj, dtype)
-        self.diff_  = numpy.array(obj, dtype)
-        self.data_  = self.data_.reshape(shape)
-        self.diff_  = self.diff_.reshape(shape)
+        self.data_  = numpy.zeros(shape, dtype)
+        self.diff_  = numpy.zeros(shape, dtype)
 
     def Reshape(self, shape):
-        self.shape_ = shape
-        self.data_  = numpy.reshape(self.data_, shape)
-        self.diff_  = numpy.reshape(self.diff_, shape)
+        if self.volume(self.shape_) == self.volume(shape):
+            self.shape_ = shape
+            self.data_  = numpy.reshape(self.data_, shape)
+            self.diff_  = numpy.reshape(self.diff_, shape)
+        else:
+            self.shape_ = shape
+            self.data_  = numpy.zeros(shape, dtype)
+            self.diff_  = numpy.zeros(shape, dtype)
 
     def ReshapeLike(self, other):
         self.Reshape(other.shape())
@@ -31,6 +34,12 @@ class Blob:
 
     def count(self):
         return self.data_.size
+
+    def volume(self, shape):
+        volume = 1
+        for i in shape:
+            volume = volume * i
+        return volume
 
     def data(self):
         return self.data_
@@ -51,10 +60,12 @@ class Blob:
         self.diff_ = self.diff_ * scale_factor
 
 if __name__ == '__main__':
-    blob = Blob(range(30), numpy.float, (5,6))
-    othe = Blob(range(30), numpy.float, (6,5))
-    print blob.data_
-    print blob.shape()
+    blob = Blob(numpy.float, (5,6))
+    othe = Blob(numpy.float, (6,5))
+
+    blob.set_data(numpy.array(range(30),float))
+    blob.set_diff(numpy.array(range(30),float))
+
     blob.Reshape((2,15))
     blob.ReshapeLike(othe)
     print blob.data_
