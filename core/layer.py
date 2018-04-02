@@ -7,6 +7,7 @@ class Layer:
         self.blobs_ = []
         self.loss_  = []
         self.param_propagate_down_ = []
+        self.layer_param_ = None
 
     def Setup(self, bottom, top):
         self.CheckBlobCounts(bottom, top)
@@ -38,6 +39,9 @@ class Layer:
         return self.blobs_
 
     def layer_param(self):
+        return self.layer_param_
+
+    def ToProto(self, param, write_diff=False):
         pass
 
     def loss(self, top_index):
@@ -101,6 +105,31 @@ class Layer:
         if self.ExactNumBottomBlobs() >= 0:
             if len(bottom) != self.ExactNumBottomBlobs():
                 print self.type() + " Layer takes " + self.ExactNumBottomBlobs() + " bottom blob(s) as input."
+
+        if self.MinBottomBlobs() >= 0:
+            if len(bottom) < self.MinBottomBlobs():
+                print self.type() + " Layer takes at least " + self.MinBottomBlobs() + " bottom blob(s) as input."
+
+        if self.MaxBottomBlobs() >= 0:
+            if len(bottom) > self.MaxBottomBlobs():
+                print self.type() + " Layer takes at most " + self.MaxBottomBlobs() + " bottom blob(s) as input."
+
+        if self.ExactNumTopBlobs() >= 0:
+            if len(top) != self.ExactNumTopBlobs():
+                print self.type() + " Layer produces " + self.ExactNumTopBlobs() + " top blob(s) as output."
+
+        if self.MinTopBlobs() >= 0:
+            if len(top) < self.MinTopBlobs():
+                print self.type() + " Layer produces at least " + self.MinTopBlobs() + " top blob(s) as output."
+
+        if self.MaxTopBlobs() >= 0:
+            if len(top) > self.MaxTopBlobs():
+                print self.type() + " Layer produces at most " + self.MaxTopBlobs() + " top blob(s) as output."
+
+        if self.EqualNumBottomTopBlobs() == True:
+            if len(top) != len(bottom):
+                print self.type() + " Layer produces one top blob as output for each " + "bottom blob input."
+
 
     def SetLossWeights(self, top):
         pass
