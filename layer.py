@@ -150,19 +150,19 @@ class ReLULayer(NeuronLayer):
         top[0].set_data( numpy.maximum(bottom[0].data(), 0))
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        bottom[0].set_diff(top[0].data()*top[0].diff())
+        bottom[0].set_diff((bottom[0].data()>0)*top[0].diff())
 
 if __name__ == '__main__':
     bottom  = Blob(numpy.float, (2,3))
     top     = Blob(numpy.float, (2,3))
 
-    bottom.set_data(numpy.array(range(6),float))
+    bottom.set_data([-2,-1,0,1,2,3])
     bottom.Reshape((2,3))
 
-    top.set_diff(numpy.array(range(6),float))
+    top.set_diff([-2,-1,0,1,2,5])
     top.Reshape((2,3))
 
-    layer = ExpLayer()
+    layer = ReLULayer()
     print layer.type()
     layer.Setup([bottom], [top])
     print layer.Forward([bottom], [top])
