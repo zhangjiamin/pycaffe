@@ -140,8 +140,15 @@ class ExpLayer(NeuronLayer):
 
 
 if __name__ == '__main__':
-    bottom  = Blob(range(6), numpy.float, (2,3))
-    top     = Blob(range(6), numpy.float, (2,3))
+    bottom  = Blob(numpy.float, (2,3))
+    top     = Blob(numpy.float, (2,3))
+
+    bottom.set_data(numpy.array(range(6),float))
+    bottom.Reshape((2,3))
+
+    top.set_diff(numpy.array(range(6),float))
+    top.Reshape((2,3))
+
     layer = ExpLayer()
     print layer.type()
     layer.Setup([bottom], [top])
