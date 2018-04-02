@@ -69,10 +69,10 @@ class Blob:
         return numpy.sum(numpy.abs(self.diff_))
 
     def sumsq_data(self):
-        return numpy.sum(numpy.sqrt(self.data_))
+        return numpy.sum(numpy.dot(self.data_, self.data_))
 
     def sumsq_diff(self):
-        return numpy.sum(numpy.sqrt(self.diff_))
+        return numpy.sum(numpy.dot(self.diff_, self.diff_))
 
 if __name__ == '__main__':
     blob = Blob(numpy.float, (5,6))
