@@ -59,6 +59,21 @@ class Blob:
     def scale_diff(self, scale_factor):
         self.diff_ = self.diff_ * scale_factor
 
+    def Update(self):
+        self.data_ = self.data_ - self.diff_
+
+    def asum_data(self):
+        return numpy.sum(numpy.abs(self.data_))
+
+    def asum_diff(self):
+        return numpy.sum(numpy.abs(self.diff_))
+
+    def sumsq_data(self):
+        return numpy.sum(numpy.sqrt(self.data_))
+
+    def sumsq_diff(self):
+        return numpy.sum(numpy.sqrt(self.diff_))
+
 if __name__ == '__main__':
     blob = Blob(numpy.float, (5,6))
     othe = Blob(numpy.float, (6,5))
