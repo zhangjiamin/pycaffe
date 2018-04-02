@@ -138,6 +138,19 @@ class ExpLayer(NeuronLayer):
         bottom[0].set_diff(top[0].data()*top[0].diff())
 
 
+class ReLULayer(NeuronLayer):
+
+    def __init__(self):
+        NeuronLayer.__init__(self)
+
+    def type(self):
+        return 'ReLU'
+
+    def Forward_cpu(self, bottom, top):
+        top[0].set_data( numpy.maximum(bottom[0].data(), 0))
+
+    def Backward_cpu(self, top, propagate_down, bottom):
+        bottom[0].set_diff(top[0].data()*top[0].diff())
 
 if __name__ == '__main__':
     bottom  = Blob(numpy.float, (2,3))
