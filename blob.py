@@ -59,6 +59,15 @@ class Blob:
     def scale_diff(self, scale_factor):
         self.diff_ = self.diff_ * scale_factor
 
+    def ShareData(self, other):
+        self.data_ = other.data()
+
+    def ShareDiff(self, other):
+        self.diff_ = other.diff()
+
+    def ShapeEquals(self, other):
+        return (self.shape_ == other.shape)
+
     def Update(self):
         self.data_ = self.data_ - self.diff_
 
