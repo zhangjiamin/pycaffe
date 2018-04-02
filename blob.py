@@ -83,6 +83,12 @@ class Blob:
     def sumsq_diff(self):
         return numpy.sum(numpy.dot(self.diff_, self.diff_))
 
+    def data_at(self, indices):
+        return self.data_[indices]
+
+    def diff_at(self, indices):
+        return self.diff_[indices]
+
 if __name__ == '__main__':
     blob = Blob(numpy.float, (5,6))
     othe = Blob(numpy.float, (6,5))

@@ -34,6 +34,19 @@ class TestBlob(unittest.TestCase):
         res = blob.sumsq_diff()
         self.assertEqual(res, 14.0)
 
+    def test_data_at(self):
+        blob = Blob(numpy.float, (2,2))
+        blob.set_data(numpy.array(range(4)).reshape(2,2))
+        res = blob.data_at((1,1))
+        self.assertEqual(res, 3)
+
+    def test_diff_at(self):
+        blob = Blob(numpy.float, (2,2))
+        blob.set_diff(numpy.array(range(4)).reshape(2,2))
+        res = blob.diff_at((1,1))
+        self.assertEqual(res, 3)
+
+
 if __name__ == '__main__':
     unittest.main()
 
