@@ -89,6 +89,15 @@ class Blob:
     def diff_at(self, indices):
         return self.diff_[indices]
 
+    def CopyFrom(self, source, copy_diff=False, reshape=False):
+        if True == reshape:
+            self.ReshapeLike(source)
+
+        if True == copy_diff:
+            self.diff_ = source.diff()
+        else:
+            self.data_ = source.data()
+
 if __name__ == '__main__':
     blob = Blob(numpy.float, (5,6))
     othe = Blob(numpy.float, (6,5))
