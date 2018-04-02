@@ -98,6 +98,13 @@ class Blob:
         else:
             self.data_ = source.data()
 
+    def FromProto(self, proto, reshape=True):
+        pass
+
+    def ToProto(self, proto, write_diff=False):
+        pass
+
+
 if __name__ == '__main__':
     blob = Blob(numpy.float, (5,6))
     othe = Blob(numpy.float, (6,5))
