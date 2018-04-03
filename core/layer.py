@@ -225,8 +225,18 @@ class InnerProductLayer(Layer):
         top[0].set_data( numpy.matmul(self.W.data(), bottom[0].data()))
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        bottom[0].set_diff((bottom[0].data()>0)*top[0].diff())
-   
+        top_shape = list(top[0].shape())
+        top_shape.extend([1,1])
+        bot_shape = list(bottom[0].shape())
+        bot_shape.reverse()
+        bot_shape.extend([1,1])
+
+        t = top[0].diff().transpose().reshape(top_shape)
+        b = bottom[0].data().transpose().reshape(bot_shape)
+        mul = numpy.dot(t, b)
+
+        self.W.set_diff( mul )
+        self.W.Reshape(self.W.shape())
 
 if __name__ == '__main__':
     bottom  = Blob(numpy.float, (2,3))
@@ -264,17 +274,31 @@ if __name__ == '__main__':
     print 'bottom.diff'
     print bottom.diff()
 
-    #bottom.set_data([-2,-1,0,1,2,3])
-    #bottom.Reshape((6,))
+    bottom.set_data([-2,-1,0,1,2,3])
+    bottom.Reshape((6,))
 
-    #top.set_data([-2,-1,0,1,2,])
-    #top.Reshape((5,))
+    top.Reshape((5,))
+    top.set_diff([-2,-1,0,1,2])
+    top.Reshape((5,))
 
     layer = InnerProductLayer()
     layer.Setup([bottom], [top])
     layer.Forward([bottom], [top])
-
+    print 'top.diff:'
+    print top.diff()
+ 
     print 'W:'
     print layer.W.data()
     print 'InnerProduct:'
     print top.data()
+    print 'Befor Backward:'
+    print layer.W.diff()
+    layer.Backward([top], [], [bottom])
+    print 'Backward:'
+    print layer.W.diff()
+    print bottom.diff().shape
+    print layer.W.data().shape
+    print 'top.diff:'
+    print top.diff()
+    print 'bottom.data:'
+    print bottom.data()
