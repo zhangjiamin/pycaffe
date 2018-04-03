@@ -10,6 +10,24 @@ class TestBlob(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_Reshape(self):
+        blob = Blob(numpy.float, (5,6))
+        blob.set_data(numpy.array(range(30),float))
+        blob.set_diff(numpy.array(range(30),float))
+        blob.Reshape((5,3))
+        blob.Reshape((5,6))
+        blob.Reshape((2,15))
+
+    def test_ReshapeLike(self):
+        blob   = Blob(numpy.float, (5,6))
+        other1 = Blob(numpy.float, (5,6))
+        other2 = Blob(numpy.float, (5,3))
+        blob.set_data(numpy.array(range(30),float))
+        blob.set_diff(numpy.array(range(30),float))
+        blob.ReshapeLike(other1)
+        blob.ReshapeLike(other2)
+        blob.ReshapeLike(other1)
+
     def test_asum_data(self):
         blob = Blob(numpy.float, (5,6))
         blob.set_data(numpy.array(range(30),float))
