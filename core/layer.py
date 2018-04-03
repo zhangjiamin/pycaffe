@@ -226,14 +226,12 @@ class InnerProductLayer(Layer):
 
     def Backward_cpu(self, top, propagate_down, bottom):
         top_shape = list(top[0].shape())
-        top_shape.extend([1,1])
         bot_shape = list(bottom[0].shape())
         bot_shape.reverse()
-        bot_shape.extend([1,1])
 
-        t = top[0].diff().transpose().reshape(top_shape)
+        t = top[0].diff().reshape(top_shape)
         b = bottom[0].data().transpose().reshape(bot_shape)
-        mul = numpy.dot(t, b)
+        mul = numpy.tensordot(t, b, axes=0)
 
         self.W.set_diff( mul )
         self.W.Reshape(self.W.shape())
