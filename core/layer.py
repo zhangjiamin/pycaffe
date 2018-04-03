@@ -194,11 +194,23 @@ class InnerProductLayer(Layer):
         self.bias_multiplier_ = None
         self.transpose_       = False
 
+        self.W = Blob(numpy.float, (1,1))
+        self.b = Blob(numpy.float, (1,))
+
     def LayerSetUp(self):
         pass
 
     def Reshape(self, bottom, top):
-        pass
+        bot_shape = list(bottom[0].shape())
+        top_shape = list(top[0].shape())
+        bot_shape.reverse()
+
+        top_shape.extend(bot_shape)
+        W_shape = top_shape
+        b_shape = top_shape
+
+        self.W.Reshape(W_shape)
+        self.b.Reshape(b_shape) 
 
     def type(self):
         return 'InnerProduct'
@@ -210,7 +222,7 @@ class InnerProductLayer(Layer):
         return 1
 
     def Forward_cpu(self, bottom, top):
-        top[0].set_data( numpy.maximum(bottom[0].data(), 0))
+        top[0].set_data( numpy.matmul(self.W.data(), bottom[0].data()))
 
     def Backward_cpu(self, top, propagate_down, bottom):
         bottom[0].set_diff((bottom[0].data()>0)*top[0].diff())
@@ -252,3 +264,17 @@ if __name__ == '__main__':
     print 'bottom.diff'
     print bottom.diff()
 
+    #bottom.set_data([-2,-1,0,1,2,3])
+    #bottom.Reshape((6,))
+
+    #top.set_data([-2,-1,0,1,2,])
+    #top.Reshape((5,))
+
+    layer = InnerProductLayer()
+    layer.Setup([bottom], [top])
+    layer.Forward([bottom], [top])
+
+    print 'W:'
+    print layer.W.data()
+    print 'InnerProduct:'
+    print top.data()

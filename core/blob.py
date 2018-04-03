@@ -4,6 +4,7 @@ class Blob:
 
     def __init__(self, dtype, shape):
         self.shape_ = shape
+        self.dtype_ = dtype
         self.data_  = numpy.zeros(shape, dtype)
         self.diff_  = numpy.zeros(shape, dtype)
 
@@ -14,8 +15,8 @@ class Blob:
             self.diff_  = numpy.reshape(self.diff_, shape)
         else:
             self.shape_ = shape
-            self.data_  = numpy.zeros(shape, dtype)
-            self.diff_  = numpy.zeros(shape, dtype)
+            self.data_  = numpy.zeros(shape, self.dtype_)
+            self.diff_  = numpy.zeros(shape, self.dtype_)
 
     def ReshapeLike(self, other):
         self.Reshape(other.shape())
