@@ -99,10 +99,26 @@ class Blob:
             self.data_ = source.data()
 
     def FromProto(self, proto, reshape=True):
-        pass
+        self.shape_ = tuple(proto.shape.dim)
+        self.data_  = proto.data
+        self.diff_  = proto.diff
+        self.Reshape(self.shape_)
 
     def ToProto(self, proto, write_diff=False):
-        pass
+        proto.ClearField('shape')
+        for i in range(len(self.shape_)):
+            proto.shape.dim.append(self.shape_[i])
+
+        proto.ClearField('data')
+        proto.ClearField('diff')
+
+        data = self.data_.reshape(self.count())
+        diff = self.diff_.reshape(self.count())
+
+        for i in range(self.count()):
+            proto.data.append(data[i])
+            if write_diff:
+                proto.diff.append(diff[i])
 
 
 if __name__ == '__main__':
