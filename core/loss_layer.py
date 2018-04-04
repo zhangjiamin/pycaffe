@@ -65,7 +65,7 @@ if __name__ == '__main__':
     bottom_1.Reshape([6])
 
     top = Blob(numpy.float, 0)
-    top.set_diff(10)
+    top.set_diff(10.0)
 
     layer = EuclideanLossLayer()
     layer.Setup([bottom_0, bottom_1], [top])
