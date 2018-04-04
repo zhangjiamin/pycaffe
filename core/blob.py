@@ -10,6 +10,8 @@ class Blob:
 
     def Reshape(self, shape):
         if 0 == shape:
+            if self.shape_ == 0:
+                return
             self.shape_ = 0
             self.data_  = 0
             self.diff_  = 0
