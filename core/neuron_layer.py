@@ -46,3 +46,7 @@ class ReLULayer(NeuronLayer):
     def Backward_cpu(self, top, propagate_down, bottom):
         bottom[0].set_diff((bottom[0].data()>0)*top[0].diff())
 
+
+if __name__ == '__main__':
+    layer = ExpLayer()
+

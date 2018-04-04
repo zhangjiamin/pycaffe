@@ -9,6 +9,11 @@ class Blob:
         self.diff_  = numpy.zeros(shape, dtype)
 
     def Reshape(self, shape):
+        if 0 == shape:
+            self.shape_ = 0
+            self.data_  = 0
+            self.diff_  = 0
+
         if self.volume(self.shape_) == self.volume(shape):
             self.shape_ = shape
             self.data_  = numpy.reshape(self.data_, shape)
