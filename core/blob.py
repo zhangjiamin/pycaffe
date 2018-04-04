@@ -39,9 +39,15 @@ class Blob:
         return self.data_.ndim
 
     def count(self):
-        return self.data_.size
+        if self.shape_ == 0:
+            return 1
+        else:
+        return self.volume(self.shape_)
 
     def volume(self, shape):
+        if self.shape_ == 0:
+            return 1
+
         volume = 1
         for i in shape:
             volume = volume * i
