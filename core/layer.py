@@ -161,7 +161,7 @@ class InnerProductLayer(Layer):
 
         top_shape.extend(bot_shape)
         W_shape = top_shape
-        b_shape = top_shape
+        b_shape = top[0].shape()
 
         self.W.Reshape(W_shape)
         self.b.Reshape(b_shape) 
@@ -176,7 +176,7 @@ class InnerProductLayer(Layer):
         return 1
 
     def Forward_cpu(self, bottom, top):
-        top[0].set_data( numpy.matmul(self.W.data(), bottom[0].data()))
+        top[0].set_data( numpy.matmul(self.W.data(), bottom[0].data()) + self.b.data() )
 
     def Backward_cpu(self, top, propagate_down, bottom):
         top_shape = list(top[0].shape())
