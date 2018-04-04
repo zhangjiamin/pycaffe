@@ -13,6 +13,7 @@ class Blob:
             self.shape_ = 0
             self.data_  = 0
             self.diff_  = 0
+            return
 
         if self.volume(self.shape_) == self.volume(shape):
             self.shape_ = shape
@@ -42,7 +43,7 @@ class Blob:
         if self.shape_ == 0:
             return 1
         else:
-        return self.volume(self.shape_)
+            return self.volume(self.shape_)
 
     def volume(self, shape):
         if self.shape_ == 0:
