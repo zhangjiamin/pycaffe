@@ -49,7 +49,10 @@ class EuclideanLossLayer(LossLayer):
         top[0].set_data(loss)
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        pass
+        print top[0].diff()
+        print bottom[0].shape()[0]
+        print self.diff_.data()
+        bottom[0].set_diff(top[0].diff()/bottom[0].shape()[0]*self.diff_.data())
 
 if __name__ == '__main__':
     bottom_0 = Blob(numpy.float, [6])
@@ -62,9 +65,11 @@ if __name__ == '__main__':
     bottom_1.Reshape([6])
 
     top = Blob(numpy.float, 0)
+    top.set_diff(10)
 
     layer = EuclideanLossLayer()
     layer.Setup([bottom_0, bottom_1], [top])
     layer.Forward([bottom_0, bottom_1], [top])
-
+    layer.Backward([top], [], [bottom_0, bottom_1])
     print top.data() 
+    print bottom_0.diff()
