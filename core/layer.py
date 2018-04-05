@@ -164,7 +164,18 @@ class InnerProductLayer(Layer):
         b_shape = top[0].shape()
 
         self.W.Reshape(W_shape)
-        self.b.Reshape(b_shape) 
+        self.b.Reshape(b_shape)
+
+        # Xavier
+        fan_in  = self.W.count()/self.W.shape()[0]
+        fan_out = self.W.count()/self.W.shape()[1]
+
+        n = (fan_in + fan_out)/2
+
+        scale  = numpy.sqrt(3/n)
+        self.W.set_data(numpy.random.uniform(-scale, scale, self.W.count()) )
+        self.W.Reshape(W_shape)
+
 
     def type(self):
         return 'InnerProduct'
@@ -189,6 +200,8 @@ class InnerProductLayer(Layer):
 
         self.W.set_diff( mul )
         self.W.Reshape(self.W.shape())
+
+        self.b.set_diff( top[0].diff() )
 
 if __name__ == '__main__':
     bottom  = Blob(numpy.float, (2,3))

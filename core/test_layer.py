@@ -26,11 +26,17 @@ class TestLayer(unittest.TestCase):
         layer.Setup([bottom], [top])
         layer.W = W
         layer.Forward([bottom], [top])
+        top.set_diff(top.data())
+        layer.Backward([top], [], [bottom])
 
         print 'bottom',bottom.data(),bottom.data().shape
         print 'top',top.data(),top.data().shape
         print 'W',layer.W.data(),layer.W.data().shape
         print 'b',layer.b.data(),layer.b.data().shape
+        print 'top.diff',top.diff(),top.data().shape
+        print 'W.diff',layer.W.diff(),layer.W.data().shape
+        print 'b.diff',layer.b.diff(),layer.b.data().shape
+
 
     def test_2(self):
         print 'test_2'
