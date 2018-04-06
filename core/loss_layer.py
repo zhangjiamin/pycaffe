@@ -58,13 +58,13 @@ class SoftmaxWithLossLayer(LossLayer):
 
     def __init__(self):
         LossLayer.__init__(self)
+        self.softmax_ = None
 
     def LayerSetUp(self, bottom, top):
-        pass
+        LossLayer.LayerSetUp(self, bottom, top)
 
     def Reshape(self, bottom, top):
         LossLayer.Reshape(self, bottom, top)
-        pass
 
     def type(self):
         return 'SoftmaxWithLoss'
@@ -79,10 +79,14 @@ class SoftmaxWithLossLayer(LossLayer):
         return 2
 
     def Forward_cpu(self, bottom, top):
-        pass
+        self.softmax_ = numpy.exp(bottom[0].data())/numpy.sum(numpy.exp(bottom[0].data())) 
+        label   = bottom[1].data()
+        loss    = numpy.dot( (-label), (numpy.log(self.softmax_)) )
+        top[0].set_data(loss)
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        pass
+        label = bottom[1].data()
+        bottom[0].set_diff( top[0].diff()*(self.softmax_ - label) )
 
 if __name__ == '__main__':
     bottom_0 = Blob(numpy.float, [6])
@@ -102,4 +106,13 @@ if __name__ == '__main__':
     layer.Forward([bottom_0, bottom_1], [top])
     layer.Backward([top], [], [bottom_0, bottom_1])
     print top.data() 
+    print bottom_0.diff()
+
+    layer = SoftmaxWithLossLayer()
+    layer.Setup([bottom_0, bottom_1], [top])
+    layer.Forward([bottom_0, bottom_1], [top])
+    print 'SoftmaxWithLoss:'
+
+    print top.data() 
+    layer.Backward([top], [], [bottom_0, bottom_1])
     print bottom_0.diff()
