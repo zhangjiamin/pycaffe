@@ -54,6 +54,36 @@ class EuclideanLossLayer(LossLayer):
         print self.diff_.data()
         bottom[0].set_diff(top[0].diff()/bottom[0].shape()[0]*self.diff_.data())
 
+class SoftmaxWithLossLayer(LossLayer):
+
+    def __init__(self):
+        LossLayer.__init__(self)
+
+    def LayerSetUp(self, bottom, top):
+        pass
+
+    def Reshape(self, bottom, top):
+        LossLayer.Reshape(self, bottom, top)
+        pass
+
+    def type(self):
+        return 'SoftmaxWithLoss'
+
+    def ExactNumTopBlobs(self):
+        return -1
+
+    def MinTopBlobs(self):
+        return 1
+
+    def MaxTopBlobs(self):
+        return 2
+
+    def Forward_cpu(self, bottom, top):
+        pass
+
+    def Backward_cpu(self, top, propagate_down, bottom):
+        pass
+
 if __name__ == '__main__':
     bottom_0 = Blob(numpy.float, [6])
     bottom_1 = Blob(numpy.float, [6])
