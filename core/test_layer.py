@@ -3,6 +3,7 @@ import numpy as np
 from blob import Blob
 
 from inner_product_layer import InnerProductLayer
+from softmax_layer import SoftMaxLayer
 
 class TestLayer(unittest.TestCase):
 
@@ -38,8 +39,23 @@ class TestLayer(unittest.TestCase):
         print 'b.diff',layer.b.diff(),layer.b.data().shape
 
 
-    def test_2(self):
-        print 'test_2'
+    def test_SoftMaxLayer(self):
+        bottom = Blob(np.float, (3,))
+        top    = Blob(np.float, (3,))
+        bottom.set_data([1,2,3])
+        bottom.Reshape((3,))
+
+        layer  = SoftMaxLayer()
+        layer.Setup([bottom], [top])
+        layer.Forward([bottom], [top])
+        top.set_diff(top.data())
+        layer.Backward([top], [], [bottom])
+
+        print 'bottom',bottom.data(),bottom.data().shape
+        print 'top',top.data(),top.data().shape
+        print 'top.diff',top.diff(),top.data().shape
+        print 'bottom.diff',bottom.diff(),bottom.diff().shape
+
 
 if __name__ == '__main__':
     unittest.main()
