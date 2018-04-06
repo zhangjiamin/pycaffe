@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from blob import Blob
 
-from layer import InnerProductLayer
+from inner_product_layer import InnerProductLayer
 
 class TestLayer(unittest.TestCase):
 
