@@ -7,18 +7,18 @@ from conv_backward_naive import conv_backward_naive
 
 class ConvolutionLayer(BaseConvolutionLayer):
 
-    def __init__(self, hh, ww, fout):
-        BaseConvolutionLayer.__init__(self, hh, ww, fout)
+    def __init__(self, hh, ww, fout, pad, stride):
+        BaseConvolutionLayer.__init__(self, hh, ww, fout, pad, stride)
 
     def type(self):
         return 'Convolution'
 
     def Forward_cpu(self, bottom, top):
-        out = conv_forward_naive(bottom[0].data(), self.W.data(), self.b.data(), 0, 1)
+        out = conv_forward_naive(bottom[0].data(), self.W.data(), self.b.data(), self.pad, self.stride)
         top[0].set_data(out)
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        dw, db, _ = conv_backward_naive(bottom[0].data(), self.W.data(), self.b.data(), top[0].diff(), 0, 1)
+        dw, db, _ = conv_backward_naive(bottom[0].data(), self.W.data(), self.b.data(), top[0].diff(), self.pad, self.stride)
         self.W.set_diff(dw)
         self.b.set_diff(db)
 

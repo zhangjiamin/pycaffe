@@ -33,7 +33,7 @@ class TestLayer(unittest.TestCase):
         W.Reshape((1,3,3,3))
         print 'W:', W.data()
         
-        layer  = ConvolutionLayer(3,3,1)
+        layer  = ConvolutionLayer(3,3,1,0,1)
         layer.Setup([bottom], [top])
         layer.W = W
         layer.Forward([bottom], [top])
