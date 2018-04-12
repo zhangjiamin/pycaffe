@@ -4,7 +4,7 @@ from blob import Blob
 
 class BaseConvolutionLayer(Layer):
 
-    def __init__(self):
+    def __init__(self, hh, ww, fout):
         self.kernel_shape_ = None
         self.stride_       = None
         self.pad_          = None
@@ -28,11 +28,20 @@ class BaseConvolutionLayer(Layer):
         self.is_1x1_           = None
         self.force_nd_im2col_  = None
 
+        self.hh   = hh
+        self.ww   = ww
+        self.fout = fout
+
+        self.W = Blob(np.float, (2,))
+        self.b = Blob(np.float, (2,))
+
     def LayerSetup(self, bottom, top):
         pass
 
     def Reshape(self, bottom, top):
-        pass
+        N, C, H, W = bottom[0].data().shape()
+        self.W.reshape( (fout, C, self.hh, self.ww) )
+        self.b.reshape( (fout,) )
 
     def MinBottomBlobs(self):
         return 1
