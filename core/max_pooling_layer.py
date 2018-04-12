@@ -1,12 +1,16 @@
-
 from layer import Layer
 from blob import Blob
 import numpy as np
+from max_pool_forward_naive import max_pool_forward_naive
+from max_pool_backward_naive import max_pool_backward_naive
 
 class MaxPoolingLayer(Layer):
 
-    def __init__(self):
+    def __init__(self, pool_height, pool_width, stride):
         Layer.__init__(self)
+        self.pool_height = pool_height
+        self.pool_width  = pool_width
+        self.stride      = stride
 
     def LayerSetup(self, bottom, top):
         pass
@@ -27,10 +31,8 @@ class MaxPoolingLayer(Layer):
         return 1
 
     def Forward_cpu(self, bottom, top):
-        pass
+        top[0].set_data(max_pool_forward_naive(bottom[0].data(), self.pool_height, self.pool_width, self.stride))
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        pass
+        bottom[0].set_diff(max_pool_backward_naive(bottom[0].data(), top[0].diff(), self.pool_height, self.pool_width, self.stride))
 
-
- 

@@ -11,3 +11,6 @@ def max_pool_backward_naive(x, dout, pool_height, pool_width, stride):
                     max_idx = np.unravel_index(np.argmax(current_matrix),current_matrix.shape)
                     dx[n, c, h * stride + max_idx[0], w * stride + max_idx[1]] += dout[n, c, h, w]
 
+
+    return dx
+
