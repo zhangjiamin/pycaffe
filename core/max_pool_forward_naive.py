@@ -1,3 +1,4 @@
+import numpy as np
 
 def max_pool_forward_naive(x, pool_height, pool_width, stride):
     N, C, H, W = x.shape

@@ -1,3 +1,4 @@
+import numpy as np
 
 def max_pool_backward_naive(x, dout, pool_height, pool_width, stride):
     N, C, H_out, W_out = dout.shape

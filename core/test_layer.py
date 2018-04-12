@@ -5,6 +5,7 @@ from blob import Blob
 from inner_product_layer import InnerProductLayer
 from softmax_layer import SoftMaxLayer
 from conv_layer import ConvolutionLayer
+from max_pooling_layer import MaxPoolingLayer
 
 class TestLayer(unittest.TestCase):
 
@@ -36,13 +37,21 @@ class TestLayer(unittest.TestCase):
         layer.Setup([bottom], [top])
         layer.W = W
         layer.Forward([bottom], [top])
-        top.set_diff(top.data())
+
+        layer1 = MaxPoolingLayer(2, 2, 1)
+        top1    = Blob(np.float, (28,28))
+
+        layer1.Forward([top], [top1])
+        top1.set_diff(top1.data())
+        layer1.Backward([top1], [], [top])
         layer.Backward([top], [], [bottom])
 
         print 'bottom',bottom.data(),bottom.data().shape
         print 'top',top.data(),top.data().shape
+        print 'top1:',top1.data(),top1.data().shape
         print 'W',layer.W.data(),layer.W.data().shape
         print 'b',layer.b.data(),layer.b.data().shape
+        print 'top1.diff',top1.diff(),top1.data().shape
         print 'top.diff',top.diff(),top.data().shape
         print 'W.diff',layer.W.diff(),layer.W.data().shape
         print 'b.diff',layer.b.diff(),layer.b.data().shape
