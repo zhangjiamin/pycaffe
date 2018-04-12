@@ -42,7 +42,6 @@ class InnerProductLayer(Layer):
         self.W.set_data(numpy.random.uniform(-scale, scale, self.W.count()) )
         self.W.Reshape(W_shape)
 
-
     def type(self):
         return 'InnerProduct'
 
@@ -56,16 +55,5 @@ class InnerProductLayer(Layer):
         top[0].set_data( numpy.matmul(self.W.data(), bottom[0].data()) + self.b.data() )
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        top_shape = list(top[0].shape())
-        bot_shape = list(bottom[0].shape())
-        bot_shape.reverse()
-
-        t = top[0].diff().reshape(top_shape)
-        b = bottom[0].data().transpose().reshape(bot_shape)
-        mul = numpy.tensordot(t, b, axes=0)
-
-        self.W.set_diff( mul )
-        self.W.Reshape(self.W.shape())
-
+        self.W.set_diff( numpy.matmul(top[0].diff(), bottom[0].data().transpose()) )
         self.b.set_diff( top[0].diff() )
-
