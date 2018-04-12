@@ -10,6 +10,9 @@ class ConvolutionLayer(BaseConvolutionLayer):
     def __init__(self, hh, ww, fout):
         BaseConvolutionLayer.__init__(self, hh, ww, fout)
 
+    def type(self):
+        return 'Convolution'
+
     def Forward_cpu(self, bottom, top):
         out = conv_forward_naive(bottom[0].data(), self.W.data(), self.b.data(), 0, 1)
         top[0].set_data(out)
