@@ -4,11 +4,17 @@ import numpy
 
 class InnerProductLayer(Layer):
 
-    def __init__(self):
+    def __init__(self, M, K, N):
         Layer.__init__(self)
-        self.M_ = None
-        self.K_ = None
-        self.N_ = None
+
+        # batch size
+        self.M_ = M
+
+        # input number of neuron
+        self.K_ = K
+
+        # output number of neuron
+        self.N_ = N
 
         self.bias_term_       = None
         self.bias_multiplier_ = None
@@ -18,16 +24,8 @@ class InnerProductLayer(Layer):
         self.b = Blob(numpy.float, (1,))
 
     def LayerSetUp(self):
-        pass
-
-    def Reshape(self, bottom, top):
-        bot_shape = list(bottom[0].shape())
-        top_shape = list(top[0].shape())
-        bot_shape.reverse()
-
-        top_shape.extend(bot_shape)
-        W_shape = top_shape
-        b_shape = top[0].shape()
+        W_shape = (self.N_, self.K_)
+        b_shape = (self.N_,)
 
         self.W.Reshape(W_shape)
         self.b.Reshape(b_shape)
@@ -41,6 +39,11 @@ class InnerProductLayer(Layer):
         scale  = numpy.sqrt(3.0/n)
         self.W.set_data(numpy.random.uniform(-scale, scale, self.W.count()) )
         self.W.Reshape(W_shape)
+
+    def Reshape(self, bottom, top):
+        top_shape = (self.M_, self.N_)
+        top[0].Reshape(top_shape)
+        self.b.Reshape(top_shape)
 
     def type(self):
         return 'InnerProduct'

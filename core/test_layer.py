@@ -66,7 +66,7 @@ class TestLayer(unittest.TestCase):
         W.set_data([1,2,3,4])
         W.Reshape((2,2))
         
-        layer  = InnerProductLayer()
+        layer  = InnerProductLayer(1,2,2)
         layer.Setup([bottom], [top])
         layer.W = W
         layer.Forward([bottom], [top])
