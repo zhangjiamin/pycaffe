@@ -11,11 +11,11 @@ class ConvolutionLayer(BaseConvolutionLayer):
         BaseConvolutionLayer.__init__(self, hh, ww, fout)
 
     def Forward_cpu(self, bottom, top):
-        out = conv_forward_naive(bottom[0].data(), self.W, self.b, 0, 1)
+        out = conv_forward_naive(bottom[0].data(), self.W.data(), self.b.data(), 0, 1)
         top[0].set_data(out)
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        dw, db, _ = conv_backward_naive(bottom[0].data(), self.W, self.b, top[0].diff(), 0, 1)
+        dw, db, _ = conv_backward_naive(bottom[0].data(), self.W.data(), self.b.data(), top[0].diff(), 0, 1)
         self.W.set_diff(dw)
         self.b.set_diff(db)
 

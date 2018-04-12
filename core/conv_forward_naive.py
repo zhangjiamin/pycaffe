@@ -1,3 +1,4 @@
+import numpy as np
 
 def conv_forward_naive(x, w, b, pad, stride):
     # N: batch size

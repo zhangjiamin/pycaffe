@@ -4,6 +4,7 @@ from blob import Blob
 
 from inner_product_layer import InnerProductLayer
 from softmax_layer import SoftMaxLayer
+from conv_layer import ConvolutionLayer
 
 class TestLayer(unittest.TestCase):
 
@@ -12,6 +13,39 @@ class TestLayer(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def test_ConvolutionLayer(self):
+        bottom = Blob(np.float, (1,3,28,28))
+        top    = Blob(np.float, (28,28))
+        bottom.set_data(range(3*28*28))
+        bottom.Reshape((1,3,28,28))
+
+        W       = Blob(np.float, (1,3,3,3))
+        fan_in  = W.count()/3
+        fan_out = W.count()/3
+
+        n = (fan_in + fan_out)/2
+
+        scale  = np.sqrt(3.0/n)
+        W.set_data(np.random.uniform(-scale, scale, W.count()) )
+
+        W.Reshape((1,3,3,3))
+        print 'W:', W.data()
+        
+        layer  = ConvolutionLayer(3,3,1)
+        layer.Setup([bottom], [top])
+        layer.W = W
+        layer.Forward([bottom], [top])
+        top.set_diff(top.data())
+        layer.Backward([top], [], [bottom])
+
+        print 'bottom',bottom.data(),bottom.data().shape
+        print 'top',top.data(),top.data().shape
+        print 'W',layer.W.data(),layer.W.data().shape
+        print 'b',layer.b.data(),layer.b.data().shape
+        print 'top.diff',top.diff(),top.data().shape
+        print 'W.diff',layer.W.diff(),layer.W.data().shape
+        print 'b.diff',layer.b.diff(),layer.b.data().shape
 
     def test_InnerProductLayer(self):
         bottom = Blob(np.float, (2,))

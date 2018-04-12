@@ -1,3 +1,4 @@
+import numpy as np
 
 def conv_backward_naive(x, w, b, dout, pad, stride):
     # N: batch size

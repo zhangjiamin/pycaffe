@@ -1,10 +1,11 @@
-import numpy
+import numpy as np
 from layer import Layer
 from blob import Blob
 
 class BaseConvolutionLayer(Layer):
 
     def __init__(self, hh, ww, fout):
+        Layer.__init__(self)
         self.kernel_shape_ = None
         self.stride_       = None
         self.pad_          = None
@@ -39,9 +40,9 @@ class BaseConvolutionLayer(Layer):
         pass
 
     def Reshape(self, bottom, top):
-        N, C, H, W = bottom[0].data().shape()
-        self.W.reshape( (fout, C, self.hh, self.ww) )
-        self.b.reshape( (fout,) )
+        N, C, H, W = bottom[0].data().shape
+        self.W.Reshape( (self.fout, C, self.hh, self.ww) )
+        self.b.Reshape( (self.fout,) )
 
     def MinBottomBlobs(self):
         return 1
