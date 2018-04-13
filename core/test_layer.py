@@ -17,7 +17,7 @@ class TestLayer(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_SoftmaxWithLossLayer(self):
+    def test_SoftmaxLossLayer(self):
         bottom_0 = Blob(numpy.float, [6])
         bottom_1 = Blob(numpy.float, [6])
 
@@ -35,7 +35,7 @@ class TestLayer(unittest.TestCase):
         for i in range(10):
             layer.Setup([bottom_0, bottom_1], [top])
             layer.Forward([bottom_0, bottom_1], [top])
-            print 'SoftmaxWithLoss:'
+            print 'SoftmaxLoss:'
 
             print 'bot.data(%d):',i,bottom_0.data()
             print 'top.data(%d):',i,top.data()
