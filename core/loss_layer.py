@@ -54,43 +54,6 @@ class EuclideanLossLayer(LossLayer):
         print self.diff_.data()
         bottom[0].set_diff(top[0].diff()/bottom[0].shape()[0]*self.diff_.data())
 
-class SoftmaxWithLossLayer(LossLayer):
-
-    def __init__(self):
-        LossLayer.__init__(self)
-        self.probs_ = None
-
-    def LayerSetUp(self, bottom, top):
-        LossLayer.LayerSetUp(self, bottom, top)
-
-    def Reshape(self, bottom, top):
-        LossLayer.Reshape(self, bottom, top)
-
-    def type(self):
-        return 'SoftmaxWithLoss'
-
-    def ExactNumTopBlobs(self):
-        return -1
-
-    def MinTopBlobs(self):
-        return 1
-
-    def MaxTopBlobs(self):
-        return 2
-
-    def Forward_cpu(self, bottom, top):
-        data = bottom[0].data()
-        data = numpy.exp(data - numpy.max(data, axis=1, keepdims=True))
-        self.probs_ = data/numpy.sum(data, axis=1, keepdims=True)
-        N = data.shape[0]
-        label   = bottom[1].data()
-        loss    = numpy.sum(numpy.multiply( (-label), (numpy.log(self.probs_)) ))/N
-        top[0].set_data(loss)
-
-    def Backward_cpu(self, top, propagate_down, bottom):
-        label = bottom[1].data()
-        bottom[0].set_diff( top[0].diff()*(self.probs_ - label) )
-
 if __name__ == '__main__':
     bottom_0 = Blob(numpy.float, [6])
     bottom_1 = Blob(numpy.float, [6])
@@ -104,24 +67,10 @@ if __name__ == '__main__':
     top = Blob(numpy.float, 0)
     top.set_diff(10.0)
 
-    #layer = EuclideanLossLayer()
-    #layer.Setup([bottom_0, bottom_1], [top])
-    #layer.Forward([bottom_0, bottom_1], [top])
-    #layer.Backward([top], [], [bottom_0, bottom_1])
-    #print top.data() 
-    #print bottom_0.diff()
+    layer = EuclideanLossLayer()
+    layer.Setup([bottom_0, bottom_1], [top])
+    layer.Forward([bottom_0, bottom_1], [top])
+    layer.Backward([top], [], [bottom_0, bottom_1])
+    print top.data() 
+    print bottom_0.diff()
 
-    layer = SoftmaxWithLossLayer()
-
-    for i in range(10):
-        layer.Setup([bottom_0, bottom_1], [top])
-        layer.Forward([bottom_0, bottom_1], [top])
-        print 'SoftmaxWithLoss:'
-
-        print 'bot.data(%d):',i,bottom_0.data() 
-        print 'top.data(%d):',i,top.data() 
-        top.set_diff(top.data())
-        layer.Backward([top], [], [bottom_0, bottom_1])
-        print 'bot.diff(%d):',i,bottom_0.diff()
-        bottom_0.set_diff(bottom_0.diff()*(0.01))
-        bottom_0.Update()
