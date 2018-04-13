@@ -37,8 +37,8 @@ class BaseConvolutionLayer(Layer):
         self.pad  = pad
         self.stride = stride
 
-        self.W = Blob(np.float, (2,))
-        self.b = Blob(np.float, (2,))
+        self.W = Blob()
+        self.b = Blob()
 
     def LayerSetup(self, bottom, top):
         pass

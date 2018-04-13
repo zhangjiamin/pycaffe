@@ -2,11 +2,11 @@ import numpy
 
 class Blob:
 
-    def __init__(self, dtype, shape):
-        self.shape_ = shape
-        self.dtype_ = dtype
-        self.data_  = numpy.zeros(shape, dtype)
-        self.diff_  = numpy.zeros(shape, dtype)
+    def __init__(self):
+        self.shape_ = None
+        self.dtype_ = numpy.float32
+        self.data_  = None
+        self.diff_  = None
 
     def Reshape(self, shape):
         if 0 == shape:
@@ -17,7 +17,7 @@ class Blob:
             self.diff_  = 0
             return
 
-        if self.volume(self.shape_) == self.volume(shape):
+        if self.shape_ == shape:
             self.shape_ = shape
             self.data_  = numpy.reshape(self.data_, shape)
             self.diff_  = numpy.reshape(self.diff_, shape)

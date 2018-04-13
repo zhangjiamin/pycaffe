@@ -20,8 +20,8 @@ class InnerProductLayer(Layer):
         self.bias_multiplier_ = None
         self.transpose_       = False
 
-        self.W = Blob(numpy.float, (N,K))
-        self.b = Blob(numpy.float, (N,))
+        self.W = Blob()
+        self.b = Blob()
 
     def LayerSetup(self, bottom, top):
         W_shape = (self.K_, self.N_)

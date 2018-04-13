@@ -20,8 +20,8 @@ class TestLayer(unittest.TestCase):
         pass
 
     def test_SoftmaxLossLayer(self):
-        bottom_0 = Blob(numpy.float, [6])
-        bottom_1 = Blob(numpy.float, [6])
+        bottom_0 = Blob()
+        bottom_1 = Blob()
 
         bottom_0.set_data([1.0,2.0,3.0,4.0,5.0,6.0])
         bottom_1.set_data([1.0,0.0,0.0,0.0,0.0,0.0])
@@ -29,7 +29,7 @@ class TestLayer(unittest.TestCase):
         bottom_0.Reshape([1,6])
         bottom_1.Reshape([1,6])
 
-        top = Blob(numpy.float, 0)
+        top = Blob()
         top.set_diff(10.0)
 
         layer = SoftmaxLossLayer()
@@ -48,8 +48,8 @@ class TestLayer(unittest.TestCase):
             bottom_0.Update()
 
     def test_ConvolutionLayer(self):
-        bottom = Blob(np.float, (1,3,28,28))
-        top    = Blob(np.float, (28,28))
+        bottom = Blob()
+        top    = Blob()
         bottom.set_data(range(3*28*28))
         bottom.Reshape((1,3,28,28))
        
@@ -58,7 +58,7 @@ class TestLayer(unittest.TestCase):
         layer.Forward([bottom], [top])
 
         layer1 = MaxPoolingLayer(2, 2, 1)
-        top1   = Blob(np.float, (28,28))
+        top1   = Blob()
 
         layer1.Forward([top], [top1])
         top1.set_diff(top1.data())
@@ -76,8 +76,8 @@ class TestLayer(unittest.TestCase):
         print 'b.diff',layer.b.diff(),layer.b.data().shape
 
     def test_InnerProductLayer(self):
-        bottom = Blob(np.float, (2,))
-        top    = Blob(np.float, (2,))
+        bottom = Blob()
+        top    = Blob()
         bottom.set_data([1,2])
         bottom.Reshape((1,2))
        
@@ -98,8 +98,8 @@ class TestLayer(unittest.TestCase):
 
 
     def test_SoftMaxLayer(self):
-        bottom = Blob(np.float, (3,))
-        top    = Blob(np.float, (3,))
+        bottom = Blob()
+        top    = Blob()
         bottom.set_data([1,2,3])
         bottom.Reshape((3,))
 
@@ -120,10 +120,10 @@ class TestLayer(unittest.TestCase):
         valid_set_x, valid_set_y = datasets[1]
         test_set_x, test_set_y = datasets[2]
 
-        bottom = Blob(np.float, (1,1,28,28))
-        top    = Blob(np.float, (1,1,26,26))
-        top1   = Blob(np.float, (1,1,26,26))
-        top2   = Blob(np.float, (1,1,26,26))
+        bottom = Blob()
+        top    = Blob()
+        top1   = Blob()
+        top2   = Blob()
         bottom.set_data(train_set_x[0])
         bottom.Reshape((1,1,28,28))
        
@@ -157,12 +157,12 @@ class TestLayer(unittest.TestCase):
         valid_set_x, valid_set_y = datasets[1]
         test_set_x, test_set_y = datasets[2]
 
-        bottom = Blob(np.float, (1,1,28,28))
-        label  = Blob(np.float, (1,10))
-        top    = Blob(np.float, (1,1,26,26))
-        top1   = Blob(np.float, (1,1,26,26))
-        top2   = Blob(np.float, (1,1,26,26))
-        top3   = Blob(np.float, (1,1,26,26))
+        bottom = Blob()
+        label  = Blob()
+        top    = Blob()
+        top1   = Blob()
+        top2   = Blob()
+        top3   = Blob()
 
         fc1  = InnerProductLayer(1,784,300)
         fc2  = InnerProductLayer(1,300,10)
@@ -179,7 +179,7 @@ class TestLayer(unittest.TestCase):
         fc2.Setup([top1], [top2])
         softmaxloss.Setup([top2,label], [top3])
 
-        for j in range(100):
+        for j in range(3):
             count = 0
             for i in range(test_set_x.shape[0]):
                 bottom.set_data(test_set_x[i])
