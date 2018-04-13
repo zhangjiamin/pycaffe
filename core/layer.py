@@ -104,27 +104,27 @@ class Layer:
     def CheckBlobCounts(self, bottom, top):
         if self.ExactNumBottomBlobs() >= 0:
             if len(bottom) != self.ExactNumBottomBlobs():
-                print self.type() + " Layer takes " + self.ExactNumBottomBlobs() + " bottom blob(s) as input."
+                print self.type() + " Layer takes " + str(self.ExactNumBottomBlobs()) + " bottom blob(s) as input."
 
         if self.MinBottomBlobs() >= 0:
             if len(bottom) < self.MinBottomBlobs():
-                print self.type() + " Layer takes at least " + self.MinBottomBlobs() + " bottom blob(s) as input."
+                print self.type() + " Layer takes at least " + str(self.MinBottomBlobs()) + " bottom blob(s) as input."
 
         if self.MaxBottomBlobs() >= 0:
             if len(bottom) > self.MaxBottomBlobs():
-                print self.type() + " Layer takes at most " + self.MaxBottomBlobs() + " bottom blob(s) as input."
+                print self.type() + " Layer takes at most " + str(self.MaxBottomBlobs()) + " bottom blob(s) as input."
 
         if self.ExactNumTopBlobs() >= 0:
             if len(top) != self.ExactNumTopBlobs():
-                print self.type() + " Layer produces " + self.ExactNumTopBlobs() + " top blob(s) as output."
+                print self.type() + " Layer produces " + str(self.ExactNumTopBlobs()) + " top blob(s) as output."
 
         if self.MinTopBlobs() >= 0:
             if len(top) < self.MinTopBlobs():
-                print self.type() + " Layer produces at least " + self.MinTopBlobs() + " top blob(s) as output."
+                print self.type() + " Layer produces at least " + str(self.MinTopBlobs()) + " top blob(s) as output."
 
         if self.MaxTopBlobs() >= 0:
             if len(top) > self.MaxTopBlobs():
-                print self.type() + " Layer produces at most " + self.MaxTopBlobs() + " top blob(s) as output."
+                print self.type() + " Layer produces at most " + str(self.MaxTopBlobs()) + " top blob(s) as output."
 
         if self.EqualNumBottomTopBlobs() == True:
             if len(top) != len(bottom):

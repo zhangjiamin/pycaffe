@@ -24,8 +24,8 @@ class InnerProductLayer(Layer):
         self.b = Blob(numpy.float, (N,))
 
     def LayerSetup(self, bottom, top):
-        W_shape = (self.N_, self.K_)
-        b_shape = (self.N_,)
+        W_shape = (self.K_, self.N_)
+        b_shape = (self.M_, self.N_)
 
         self.W.Reshape(W_shape)
         self.b.Reshape(b_shape)
@@ -43,7 +43,6 @@ class InnerProductLayer(Layer):
     def Reshape(self, bottom, top):
         top_shape = (self.M_, self.N_)
         top[0].Reshape(top_shape)
-        self.b.Reshape(top_shape)
 
     def type(self):
         return 'InnerProduct'
@@ -55,8 +54,8 @@ class InnerProductLayer(Layer):
         return 1
 
     def Forward_cpu(self, bottom, top):
-        top[0].set_data( numpy.matmul(self.W.data(), bottom[0].data()) + self.b.data() )
+        top[0].set_data( numpy.matmul(bottom[0].data(), self.W.data()) + self.b.data() )
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        self.W.set_diff( numpy.matmul(top[0].diff(), bottom[0].data().transpose()) )
+        self.W.set_diff( numpy.matmul(bottom[0].data().transpose(), top[0].diff()) )
         self.b.set_diff( top[0].diff() )
