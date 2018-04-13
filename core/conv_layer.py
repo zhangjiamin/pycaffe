@@ -1,4 +1,5 @@
 from base_conv_layer import BaseConvolutionLayer
+import numpy
 import numpy as np
 from layer import Layer
 from blob import Blob
@@ -7,8 +8,25 @@ from conv_backward_naive import conv_backward_naive
 
 class ConvolutionLayer(BaseConvolutionLayer):
 
-    def __init__(self, hh, ww, fout, pad, stride):
-        BaseConvolutionLayer.__init__(self, hh, ww, fout, pad, stride)
+    def __init__(self, C, hh, ww, fout, pad, stride):
+        BaseConvolutionLayer.__init__(self, C, hh, ww, fout, pad, stride)
+
+    def LayerSetup(self, bottom, top):
+        W_shape = (self.fout, self.C, self.hh, self.ww)
+        b_shape = (self.fout,)
+
+        self.W.Reshape(W_shape)
+        self.b.Reshape(b_shape)
+
+        # Xavier
+        fan_in  = self.W.count()/self.W.shape()[0]
+        fan_out = self.W.count()/self.W.shape()[1]
+
+        n = (fan_in + fan_out)/2
+
+        scale  = numpy.sqrt(3.0/n)
+        self.W.set_data(numpy.random.uniform(-scale, scale, self.W.count()) )
+        self.W.Reshape(W_shape)
 
     def type(self):
         return 'Convolution'

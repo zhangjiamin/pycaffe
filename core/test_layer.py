@@ -50,26 +50,13 @@ class TestLayer(unittest.TestCase):
         top    = Blob(np.float, (28,28))
         bottom.set_data(range(3*28*28))
         bottom.Reshape((1,3,28,28))
-
-        W       = Blob(np.float, (1,3,3,3))
-        fan_in  = W.count()/3
-        fan_out = W.count()/3
-
-        n = (fan_in + fan_out)/2
-
-        scale  = np.sqrt(3.0/n)
-        W.set_data(np.random.uniform(-scale, scale, W.count()) )
-
-        W.Reshape((1,3,3,3))
-        print 'W:', W.data()
-        
-        layer  = ConvolutionLayer(3,3,1,0,1)
+       
+        layer  = ConvolutionLayer(3,3,3,1,0,1)
         layer.Setup([bottom], [top])
-        layer.W = W
         layer.Forward([bottom], [top])
 
         layer1 = MaxPoolingLayer(2, 2, 1)
-        top1    = Blob(np.float, (28,28))
+        top1   = Blob(np.float, (28,28))
 
         layer1.Forward([top], [top1])
         top1.set_diff(top1.data())
