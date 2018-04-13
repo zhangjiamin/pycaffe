@@ -151,7 +151,7 @@ class TestLayer(unittest.TestCase):
         #print 'W.diff',layer.W.diff(),layer.W.data().shape
         #print 'b.diff',layer.b.diff(),layer.b.data().shape
 
-    def test_mnist_1(self):
+    def test_mnist_mlp(self):
         datasets = load_data('mnist.pkl.gz')
         train_set_x, train_set_y = datasets[0]
         valid_set_x, valid_set_y = datasets[1]
@@ -178,6 +178,9 @@ class TestLayer(unittest.TestCase):
         relu.Setup([top], [top1])
         fc2.Setup([top1], [top2])
         softmaxloss.Setup([top2,label], [top3])
+        blobs = []
+        blobs = fc1.blobs()
+        blobs.extend(fc2.blobs())
 
         for j in range(3):
             count = 0
@@ -197,7 +200,6 @@ class TestLayer(unittest.TestCase):
 
             print 'Accurary:', j, count*1.0/test_set_x.shape[0]
 
-
             for i in range(train_set_x.shape[0]):
                 bottom.set_data(train_set_x[i])
                 label.set_data(train_set_y[i])
@@ -216,11 +218,8 @@ class TestLayer(unittest.TestCase):
                 relu.Backward([top1], [], [top])
                 fc1.Backward([top], [], [bottom])
 
-                fc1.W.Update()
-                fc1.b.Update()
-                fc2.W.Update()
-                fc2.b.Update()
-
+                for i in range(len(blobs)):
+                    blobs[i].Update()
 
 if __name__ == '__main__':
     unittest.main()

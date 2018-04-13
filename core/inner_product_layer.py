@@ -22,6 +22,8 @@ class InnerProductLayer(Layer):
 
         self.W = Blob()
         self.b = Blob()
+        self.blobs_.append(self.W)
+        self.blobs_.append(self.b)
 
     def LayerSetup(self, bottom, top):
         W_shape = (self.K_, self.N_)
