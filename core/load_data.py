@@ -60,3 +60,12 @@ if __name__ == '__main__':
     print train_set_x.shape
     print valid_set_x.shape
     print test_set_x.shape
+
+    print train_set_y.shape
+    print valid_set_y.shape
+    print test_set_y.shape
+
+    print type(test_set_x[10])
+    print test_set_x[11]
+    print type(test_set_y[10])
+    print test_set_y[11]
