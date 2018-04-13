@@ -2,6 +2,7 @@ import unittest
 import numpy
 import numpy as np
 from blob import Blob
+from load_data import load_data
 
 from inner_product_layer import InnerProductLayer
 from softmax_layer import SoftMaxLayer
@@ -51,7 +52,7 @@ class TestLayer(unittest.TestCase):
         bottom.set_data(range(3*28*28))
         bottom.Reshape((1,3,28,28))
        
-        layer  = ConvolutionLayer(3,3,3,1,0,1)
+        layer  = ConvolutionLayer(3,3,1,0,1)
         layer.Setup([bottom], [top])
         layer.Forward([bottom], [top])
 
@@ -111,6 +112,30 @@ class TestLayer(unittest.TestCase):
         print 'top',top.data(),top.data().shape
         print 'top.diff',top.diff(),top.data().shape
         print 'bottom.diff',bottom.diff(),bottom.diff().shape
+
+    def test_mnist_ConvolutionLayer(self):
+        datasets = load_data('mnist.pkl.gz')
+        train_set_x, train_set_y = datasets[0]
+        valid_set_x, valid_set_y = datasets[1]
+        test_set_x, test_set_y = datasets[2]
+
+        bottom = Blob(np.float, (1,1,28,28))
+        top    = Blob(np.float, (1,1,26,26))
+        bottom.set_data(train_set_x[0])
+        bottom.Reshape((1,1,28,28))
+       
+        layer  = ConvolutionLayer(3,3,1,0,1)
+        layer.Setup([bottom], [top])
+        layer.Forward([bottom], [top])
+        layer.Backward([top], [], [bottom])
+
+        print 'bottom',bottom.data(),bottom.data().shape
+        print 'top',top.data(),top.data().shape
+        print 'W',layer.W.data(),layer.W.data().shape
+        print 'b',layer.b.data(),layer.b.data().shape
+        print 'top.diff',top.diff(),top.data().shape
+        print 'W.diff',layer.W.diff(),layer.W.data().shape
+        print 'b.diff',layer.b.diff(),layer.b.data().shape
 
 
 if __name__ == '__main__':

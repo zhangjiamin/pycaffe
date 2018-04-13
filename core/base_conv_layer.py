@@ -4,7 +4,7 @@ from blob import Blob
 
 class BaseConvolutionLayer(Layer):
 
-    def __init__(self, C, hh, ww, fout, pad, stride):
+    def __init__(self, hh, ww, fout, pad, stride):
         Layer.__init__(self)
         self.kernel_shape_ = None
         self.stride_       = None
@@ -29,7 +29,8 @@ class BaseConvolutionLayer(Layer):
         self.is_1x1_           = None
         self.force_nd_im2col_  = None
 
-        self.C    = C
+        #self.N    = N
+        #self.C    = C
         self.hh   = hh
         self.ww   = ww
         self.fout = fout

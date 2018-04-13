@@ -8,11 +8,12 @@ from conv_backward_naive import conv_backward_naive
 
 class ConvolutionLayer(BaseConvolutionLayer):
 
-    def __init__(self, C, hh, ww, fout, pad, stride):
-        BaseConvolutionLayer.__init__(self, C, hh, ww, fout, pad, stride)
+    def __init__(self, hh, ww, fout, pad, stride):
+        BaseConvolutionLayer.__init__(self, hh, ww, fout, pad, stride)
 
     def LayerSetup(self, bottom, top):
-        W_shape = (self.fout, self.C, self.hh, self.ww)
+        N, C, H, W = bottom[0].data().shape
+        W_shape = (self.fout, C, self.hh, self.ww)
         b_shape = (self.fout,)
 
         self.W.Reshape(W_shape)
@@ -27,6 +28,13 @@ class ConvolutionLayer(BaseConvolutionLayer):
         scale  = numpy.sqrt(3.0/n)
         self.W.set_data(numpy.random.uniform(-scale, scale, self.W.count()) )
         self.W.Reshape(W_shape)
+
+    def Reshape(self, bottom, top):
+        N, C, H, W = bottom[0].data().shape
+        H_out = 1 + (H + 2 * self.pad - self.hh) / self.stride
+        W_out = 1 + (W + 2 * self.pad - self.ww) / self.stride
+
+        top[0].Reshape((N, self.fout, H_out, W_out))
 
     def type(self):
         return 'Convolution'
