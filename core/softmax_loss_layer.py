@@ -8,7 +8,7 @@ class SoftmaxLossLayer(LossLayer):
         LossLayer.__init__(self)
         self.probs_ = None
 
-    def LayerSetUp(self, bottom, top):
+    def LayerSetup(self, bottom, top):
         LossLayer.LayerSetUp(self, bottom, top)
 
     def Reshape(self, bottom, top):
