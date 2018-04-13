@@ -161,8 +161,12 @@ class TestLayer(unittest.TestCase):
         label  = Blob(np.float, (1,10))
         top    = Blob(np.float, (1,1,26,26))
         top1   = Blob(np.float, (1,1,26,26))
+        top2   = Blob(np.float, (1,1,26,26))
+        top3   = Blob(np.float, (1,1,26,26))
 
-        fc1  = InnerProductLayer(1,784,10)
+        fc1  = InnerProductLayer(1,784,300)
+        fc2  = InnerProductLayer(1,300,10)
+        relu = ReLULayer()
         softmaxloss = SoftmaxLossLayer()
 
         bottom.set_data(train_set_x[0])
@@ -171,9 +175,29 @@ class TestLayer(unittest.TestCase):
         label.Reshape((1,10))
 
         fc1.Setup([bottom], [top])
-        softmaxloss.Setup([top,label], [top1])
+        relu.Setup([top], [top1])
+        fc2.Setup([top1], [top2])
+        softmaxloss.Setup([top2,label], [top3])
 
         for j in range(100):
+            count = 0
+            for i in range(test_set_x.shape[0]):
+                bottom.set_data(test_set_x[i])
+                label.set_data(test_set_y[i])
+                bottom.Reshape((1,784))
+                label.Reshape((1,10))
+       
+                fc1.Forward([bottom], [top])
+                relu.Forward([top], [top1])
+                fc2.Forward([top1], [top2])
+                softmaxloss.Forward([top2,label], [top3])
+
+                if np.argmax(softmaxloss.probs_) == np.argmax(test_set_y[i]):
+                    count = count + 1
+
+            print 'Accurary:', j, count*1.0/test_set_x.shape[0]
+
+
             for i in range(train_set_x.shape[0]):
                 bottom.set_data(train_set_x[i])
                 label.set_data(train_set_y[i])
@@ -181,28 +205,22 @@ class TestLayer(unittest.TestCase):
                 label.Reshape((1,10))
        
                 fc1.Forward([bottom], [top])
-                softmaxloss.Forward([top,label], [top1])
+                relu.Forward([top], [top1])
+                fc2.Forward([top1], [top2])
+                softmaxloss.Forward([top2,label], [top3])
 
-                top1.set_diff(top1.data()*0.01)
+                top3.set_diff(top3.data()*0.01)
 
-                softmaxloss.Backward([top1], [], [top,label])
+                softmaxloss.Backward([top3], [], [top2,label])
+                fc2.Backward([top2], [], [top1])
+                relu.Backward([top1], [], [top])
                 fc1.Backward([top], [], [bottom])
 
                 fc1.W.Update()
                 fc1.b.Update()
+                fc2.W.Update()
+                fc2.b.Update()
 
-            #print 'bottom(%d)',bottom.data(),bottom.data().shape
-            #print 'top(%d)',top.data(),top.data().shape
-            #print 'label(%d)',label.data(),label.data().shape
-                if i%1000 == 0:
-                    print 'loss:',j,i,top1.data(),top1.data().shape
-
-        #print 'top2',top2.data(),top2.data().shape
-        #print 'W',layer.W.data(),layer.W.data().shape
-        #print 'b',layer.b.data(),layer.b.data().shape
-        #print 'top.diff',top.diff(),top.data().shape
-        #print 'W.diff',layer.W.diff(),layer.W.data().shape
-        #print 'b.diff',layer.b.diff(),layer.b.data().shape
 
 if __name__ == '__main__':
     unittest.main()
