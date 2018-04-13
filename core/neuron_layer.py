@@ -1,3 +1,4 @@
+import numpy
 from layer import Layer
 
 class NeuronLayer(Layer):

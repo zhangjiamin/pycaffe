@@ -9,6 +9,7 @@ from softmax_layer import SoftMaxLayer
 from conv_layer import ConvolutionLayer
 from max_pooling_layer import MaxPoolingLayer
 from softmax_loss_layer import SoftmaxLossLayer
+from neuron_layer import ReLULayer
 
 class TestLayer(unittest.TestCase):
 
@@ -122,6 +123,7 @@ class TestLayer(unittest.TestCase):
         bottom = Blob(np.float, (1,1,28,28))
         top    = Blob(np.float, (1,1,26,26))
         top1   = Blob(np.float, (1,1,26,26))
+        top2   = Blob(np.float, (1,1,26,26))
         bottom.set_data(train_set_x[0])
         bottom.Reshape((1,1,28,28))
        
@@ -133,17 +135,21 @@ class TestLayer(unittest.TestCase):
         max_pool1.Setup([top], [top1])
         max_pool1.Forward([top], [top1])
 
+        relu1 = ReLULayer()
+        relu1.Setup([top1], [top2])
+        relu1.Forward([top1], [top2])
         #layer.Backward([top], [], [bottom])
 
         print 'bottom',bottom.data(),bottom.data().shape
         print 'top',top.data(),top.data().shape
         print 'top1',top1.data(),top1.data().shape
+        print 'top2',top2.data(),top2.data().shape
+
         #print 'W',layer.W.data(),layer.W.data().shape
         #print 'b',layer.b.data(),layer.b.data().shape
-        print 'top.diff',top.diff(),top.data().shape
+        #print 'top.diff',top.diff(),top.data().shape
         #print 'W.diff',layer.W.diff(),layer.W.data().shape
         #print 'b.diff',layer.b.diff(),layer.b.data().shape
-
 
 if __name__ == '__main__':
     unittest.main()
