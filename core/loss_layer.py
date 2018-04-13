@@ -58,7 +58,7 @@ class SoftmaxWithLossLayer(LossLayer):
 
     def __init__(self):
         LossLayer.__init__(self)
-        self.softmax_ = None
+        self.probs_ = None
 
     def LayerSetUp(self, bottom, top):
         LossLayer.LayerSetUp(self, bottom, top)
@@ -80,15 +80,16 @@ class SoftmaxWithLossLayer(LossLayer):
 
     def Forward_cpu(self, bottom, top):
         data = bottom[0].data()
-        data = data - numpy.max(data)
-        self.softmax_ = numpy.exp(data)/numpy.sum(numpy.exp(data)) 
+        data = numpy.exp(data - numpy.max(data, axis=1, keepdims=True))
+        self.probs_ = data/numpy.sum(data, axis=1, keepdims=True)
+        N = data.shape[0]
         label   = bottom[1].data()
-        loss    = numpy.dot( (-label), (numpy.log(self.softmax_)) )
+        loss    = numpy.sum(numpy.multiply( (-label), (numpy.log(self.probs_)) ))/N
         top[0].set_data(loss)
 
     def Backward_cpu(self, top, propagate_down, bottom):
         label = bottom[1].data()
-        bottom[0].set_diff( top[0].diff()*(self.softmax_ - label) )
+        bottom[0].set_diff( top[0].diff()*(self.probs_ - label) )
 
 if __name__ == '__main__':
     bottom_0 = Blob(numpy.float, [6])
@@ -97,22 +98,22 @@ if __name__ == '__main__':
     bottom_0.set_data([1.0,2.0,3.0,4.0,5.0,6.0])
     bottom_1.set_data([1.0,0.0,0.0,0.0,0.0,0.0])
 
-    bottom_0.Reshape([6])
-    bottom_1.Reshape([6])
+    bottom_0.Reshape([1,6])
+    bottom_1.Reshape([1,6])
 
     top = Blob(numpy.float, 0)
     top.set_diff(10.0)
 
-    layer = EuclideanLossLayer()
-    layer.Setup([bottom_0, bottom_1], [top])
-    layer.Forward([bottom_0, bottom_1], [top])
-    layer.Backward([top], [], [bottom_0, bottom_1])
-    print top.data() 
-    print bottom_0.diff()
+    #layer = EuclideanLossLayer()
+    #layer.Setup([bottom_0, bottom_1], [top])
+    #layer.Forward([bottom_0, bottom_1], [top])
+    #layer.Backward([top], [], [bottom_0, bottom_1])
+    #print top.data() 
+    #print bottom_0.diff()
 
     layer = SoftmaxWithLossLayer()
 
-    for i in range(10000):
+    for i in range(10):
         layer.Setup([bottom_0, bottom_1], [top])
         layer.Forward([bottom_0, bottom_1], [top])
         print 'SoftmaxWithLoss:'

@@ -1,4 +1,5 @@
 import unittest
+import numpy
 import numpy as np
 from blob import Blob
 
@@ -6,6 +7,7 @@ from inner_product_layer import InnerProductLayer
 from softmax_layer import SoftMaxLayer
 from conv_layer import ConvolutionLayer
 from max_pooling_layer import MaxPoolingLayer
+from softmax_loss_layer import SoftmaxLossLayer
 
 class TestLayer(unittest.TestCase):
 
@@ -14,6 +16,34 @@ class TestLayer(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def test_SoftmaxWithLossLayer(self):
+        bottom_0 = Blob(numpy.float, [6])
+        bottom_1 = Blob(numpy.float, [6])
+
+        bottom_0.set_data([1.0,2.0,3.0,4.0,5.0,6.0])
+        bottom_1.set_data([1.0,0.0,0.0,0.0,0.0,0.0])
+
+        bottom_0.Reshape([1,6])
+        bottom_1.Reshape([1,6])
+
+        top = Blob(numpy.float, 0)
+        top.set_diff(10.0)
+
+        layer = SoftmaxLossLayer()
+
+        for i in range(10):
+            layer.Setup([bottom_0, bottom_1], [top])
+            layer.Forward([bottom_0, bottom_1], [top])
+            print 'SoftmaxWithLoss:'
+
+            print 'bot.data(%d):',i,bottom_0.data()
+            print 'top.data(%d):',i,top.data()
+            top.set_diff(top.data())
+            layer.Backward([top], [], [bottom_0, bottom_1])
+            print 'bot.diff(%d):',i,bottom_0.diff()
+            bottom_0.set_diff(bottom_0.diff()*(0.01))
+            bottom_0.Update()
 
     def test_ConvolutionLayer(self):
         bottom = Blob(np.float, (1,3,28,28))
