@@ -164,20 +164,38 @@ class TestLayer(unittest.TestCase):
         top2   = Blob()
         top3   = Blob()
 
+        layers = []
+
         fc1  = InnerProductLayer(1,784,300)
         fc2  = InnerProductLayer(1,300,10)
         relu = ReLULayer()
         softmaxloss = SoftmaxLossLayer()
+
+        layers.append(fc1)
+        layers.append(relu)
+        layers.append(fc2)
+        layers.append(softmaxloss)
 
         bottom.set_data(train_set_x[0])
         label.set_data(train_set_y[0])
         bottom.Reshape((1,784))
         label.Reshape((1,10))
 
-        fc1.Setup([bottom], [top])
-        relu.Setup([top], [top1])
-        fc2.Setup([top1], [top2])
-        softmaxloss.Setup([top2,label], [top3])
+        bottoms = []
+        tops = []
+
+        bottoms.append([bottom])
+        tops.append([top])
+        bottoms.append([top])
+        tops.append([top1])
+        bottoms.append([top1])
+        tops.append([top2])
+        bottoms.append([top2,label])
+        tops.append([top3])
+
+        for i in range(len(layers)):
+            layers[i].Setup(bottoms[i], tops[i])
+
         blobs = []
         blobs = fc1.blobs()
         blobs.extend(fc2.blobs())
@@ -189,37 +207,31 @@ class TestLayer(unittest.TestCase):
                 label.set_data(test_set_y[i])
                 bottom.Reshape((1,784))
                 label.Reshape((1,10))
-       
-                fc1.Forward([bottom], [top])
-                relu.Forward([top], [top1])
-                fc2.Forward([top1], [top2])
-                softmaxloss.Forward([top2,label], [top3])
 
+                for ii in range(len(layers)):
+                    layers[ii].Forward(bottoms[ii], tops[ii])
+     
                 if np.argmax(softmaxloss.probs_) == np.argmax(test_set_y[i]):
                     count = count + 1
 
-            print 'Accurary:', j, count*1.0/test_set_x.shape[0]
+            print 'Accurary:', j, count, test_set_x.shape[0], count*1.0/test_set_x.shape[0]
 
             for i in range(train_set_x.shape[0]):
                 bottom.set_data(train_set_x[i])
                 label.set_data(train_set_y[i])
                 bottom.Reshape((1,784))
                 label.Reshape((1,10))
-       
-                fc1.Forward([bottom], [top])
-                relu.Forward([top], [top1])
-                fc2.Forward([top1], [top2])
-                softmaxloss.Forward([top2,label], [top3])
 
+                for ii in range(len(layers)):
+                    layers[ii].Forward(bottoms[ii], tops[ii])
+       
                 top3.set_diff(top3.data()*0.01)
 
-                softmaxloss.Backward([top3], [], [top2,label])
-                fc2.Backward([top2], [], [top1])
-                relu.Backward([top1], [], [top])
-                fc1.Backward([top], [], [bottom])
+                for ii in reversed(range(len(layers))):
+                    layers[ii].Backward(tops[ii], [], bottoms[ii])
 
-                for i in range(len(blobs)):
-                    blobs[i].Update()
+                for ii in range(len(blobs)):
+                    blobs[ii].Update()
 
 if __name__ == '__main__':
     unittest.main()
