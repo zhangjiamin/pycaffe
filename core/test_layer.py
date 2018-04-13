@@ -113,7 +113,7 @@ class TestLayer(unittest.TestCase):
         print 'top.diff',top.diff(),top.data().shape
         print 'bottom.diff',bottom.diff(),bottom.diff().shape
 
-    def test_mnist_ConvolutionLayer(self):
+    def test_mnist(self):
         datasets = load_data('mnist.pkl.gz')
         train_set_x, train_set_y = datasets[0]
         valid_set_x, valid_set_y = datasets[1]
@@ -121,21 +121,28 @@ class TestLayer(unittest.TestCase):
 
         bottom = Blob(np.float, (1,1,28,28))
         top    = Blob(np.float, (1,1,26,26))
+        top1   = Blob(np.float, (1,1,26,26))
         bottom.set_data(train_set_x[0])
         bottom.Reshape((1,1,28,28))
        
-        layer  = ConvolutionLayer(3,3,1,0,1)
-        layer.Setup([bottom], [top])
-        layer.Forward([bottom], [top])
-        layer.Backward([top], [], [bottom])
+        conv1  = ConvolutionLayer(3,3,1,0,1)
+        conv1.Setup([bottom], [top])
+        conv1.Forward([bottom], [top])
+
+        max_pool1 = MaxPoolingLayer(2,2,1)
+        max_pool1.Setup([top], [top1])
+        max_pool1.Forward([top], [top1])
+
+        #layer.Backward([top], [], [bottom])
 
         print 'bottom',bottom.data(),bottom.data().shape
         print 'top',top.data(),top.data().shape
-        print 'W',layer.W.data(),layer.W.data().shape
-        print 'b',layer.b.data(),layer.b.data().shape
+        print 'top1',top1.data(),top1.data().shape
+        #print 'W',layer.W.data(),layer.W.data().shape
+        #print 'b',layer.b.data(),layer.b.data().shape
         print 'top.diff',top.diff(),top.data().shape
-        print 'W.diff',layer.W.diff(),layer.W.data().shape
-        print 'b.diff',layer.b.diff(),layer.b.data().shape
+        #print 'W.diff',layer.W.diff(),layer.W.data().shape
+        #print 'b.diff',layer.b.diff(),layer.b.data().shape
 
 
 if __name__ == '__main__':

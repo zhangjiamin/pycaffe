@@ -16,7 +16,10 @@ class MaxPoolingLayer(Layer):
         pass
 
     def Reshape(self, bottom, top):
-        pass
+        N, C, H, W = bottom[0].data().shape
+        H_out = 1 + (H - self.pool_height) / self.stride
+        W_out = 1 + (W - self.pool_width) / self.stride
+        top[0].Reshape((N, C, H_out, W_out))
 
     def type(self):
         return 'MaxPooling'
