@@ -1,6 +1,15 @@
 import os
 import gzip
+import numpy
 import six.moves.cPickle as pickle
+
+def dense_to_one_hot(labels_dense, num_classes=10):
+  """Convert class labels from scalars to one-hot vectors."""
+  num_labels = labels_dense.shape[0]
+  index_offset = numpy.arange(num_labels) * num_classes
+  labels_one_hot = numpy.zeros((num_labels, num_classes))
+  labels_one_hot.flat[index_offset + labels_dense.ravel()] = 1
+  return labels_one_hot
 
 def load_data(dataset):
     ''' Loads the dataset
@@ -49,6 +58,14 @@ def load_data(dataset):
     # the number of rows in the input. It should give the target
     # to the example with the same index in the input.
 
+    train_set = list(train_set)
+    valid_set = list(valid_set)
+    test_set = list(test_set)
+
+    train_set[1] = dense_to_one_hot(train_set[1])
+    valid_set[1] = dense_to_one_hot(valid_set[1])
+    test_set[1] = dense_to_one_hot(test_set[1])
+
     return (train_set, valid_set, test_set)
 
 if __name__ == '__main__':
@@ -56,6 +73,10 @@ if __name__ == '__main__':
     train_set_x, train_set_y = datasets[0]
     valid_set_x, valid_set_y = datasets[1]
     test_set_x, test_set_y = datasets[2]
+
+    print datasets[0]
+    print datasets[1]
+    print datasets[2]
 
     print train_set_x.shape
     print valid_set_x.shape
