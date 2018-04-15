@@ -172,7 +172,7 @@ class TestLayer(unittest.TestCase):
 
         fc1  = InnerProductLayer(batch_size,784,392)
         relu = ReLULayer()
-        drop = DropoutLayer(0.7)
+        drop = DropoutLayer(1.0)
         fc2  = InnerProductLayer(batch_size,392,10)
         softmaxloss = SoftmaxLossLayer()
 
@@ -219,7 +219,7 @@ class TestLayer(unittest.TestCase):
         lr = 0.2
         eps = 1e-8
 
-        for j in range(100):
+        for j in range(1000):
             count = 0
             total = 0
             

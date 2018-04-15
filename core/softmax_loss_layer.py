@@ -32,7 +32,8 @@ class SoftmaxLossLayer(LossLayer):
         self.probs_ = data1/numpy.sum(data1, axis=1, keepdims=True)
         N = data.shape[0]
         label   = bottom[1].data()
-        loss    = -numpy.sum(numpy.log(numpy.sum(numpy.multiply( label, self.probs_),axis=1)))/N
+        probs   = numpy.sum(numpy.multiply( label, self.probs_),axis=1)
+        loss    = -numpy.sum(numpy.log(numpy.where(probs>1.175494351e-38, probs, 1.175494351e-38)))/N
         top[0].set_data(loss)
 
     def Backward_cpu(self, top, propagate_down, bottom):

@@ -54,7 +54,10 @@ class DropoutLayer(NeuronLayer):
         NeuronLayer.__init__(self)
         self.threshold_ = threshold
         self.rand_blob_ = Blob()
-        self.scale_     = 1.0/(1.0-threshold)
+        if 1.0 == threshold:
+            self.scale_ = 1.0
+        else:
+            self.scale_     = 1.0/(1.0-threshold)
 
     def type(self):
         return 'Dropout'
