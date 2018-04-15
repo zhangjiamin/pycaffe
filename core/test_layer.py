@@ -251,10 +251,11 @@ class TestLayer(unittest.TestCase):
                 bottom.Reshape((batch_size,784))
                 label.Reshape((batch_size,10))
 
+                loss_ = 0
                 for ii in range(len(layers)):
-                    layers[ii].Forward(bottoms[ii], tops[ii])
+                    loss_ += layers[ii].Forward(bottoms[ii], tops[ii])
        
-                loss.set_diff(loss.data())
+                loss.set_diff(loss_)
 
                 for ii in reversed(range(len(layers))):
                     layers[ii].Backward(tops[ii], [], bottoms[ii])

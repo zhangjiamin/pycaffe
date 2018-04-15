@@ -6,6 +6,7 @@ class LossLayer(Layer):
 
     def __init__(self):
         Layer.__init__(self)
+        self.loss_.append(1)
 
     def LayerSetup(self, bottom, top):
         pass
@@ -13,6 +14,7 @@ class LossLayer(Layer):
     def Reshape(self, bottom, top):
         self.shape_ = 0
         top[0].Reshape(0)
+        top[0].set_diff(1.0)
 
     def ExactNumBottomBlobs(self):
         return 2
