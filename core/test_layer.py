@@ -10,6 +10,7 @@ from conv_layer import ConvolutionLayer
 from max_pooling_layer import MaxPoolingLayer
 from softmax_loss_layer import SoftmaxLossLayer
 from neuron_layer import ReLULayer
+from neuron_layer import DropoutLayer
 
 class TestLayer(unittest.TestCase):
 
@@ -162,17 +163,20 @@ class TestLayer(unittest.TestCase):
         top    = Blob()
         top1   = Blob()
         top2   = Blob()
-        top3   = Blob()
+        loss   = Blob()
+        top4   = Blob()
 
         layers = []
 
-        fc1  = InnerProductLayer(1,784,300)
-        fc2  = InnerProductLayer(1,300,10)
+        fc1  = InnerProductLayer(1,784,384)
         relu = ReLULayer()
+        drop = DropoutLayer(0.5)
+        fc2  = InnerProductLayer(1,384,10)
         softmaxloss = SoftmaxLossLayer()
 
         layers.append(fc1)
         layers.append(relu)
+        layers.append(drop)
         layers.append(fc2)
         layers.append(softmaxloss)
 
@@ -188,10 +192,14 @@ class TestLayer(unittest.TestCase):
         tops.append([top])
         bottoms.append([top])
         tops.append([top1])
+
         bottoms.append([top1])
+        tops.append([top4])
+
+        bottoms.append([top4])
         tops.append([top2])
         bottoms.append([top2,label])
-        tops.append([top3])
+        tops.append([loss])
 
         for i in range(len(layers)):
             layers[i].Setup(bottoms[i], tops[i])
@@ -200,7 +208,7 @@ class TestLayer(unittest.TestCase):
         blobs = fc1.blobs()
         blobs.extend(fc2.blobs())
 
-        for j in range(3):
+        for j in range(100):
             count = 0
             for i in range(test_set_x.shape[0]):
                 bottom.set_data(test_set_x[i])
@@ -225,7 +233,7 @@ class TestLayer(unittest.TestCase):
                 for ii in range(len(layers)):
                     layers[ii].Forward(bottoms[ii], tops[ii])
        
-                top3.set_diff(top3.data()*0.01)
+                loss.set_diff(loss.data()*0.01)
 
                 for ii in reversed(range(len(layers))):
                     layers[ii].Backward(tops[ii], [], bottoms[ii])
