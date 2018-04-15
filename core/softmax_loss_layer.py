@@ -28,11 +28,11 @@ class SoftmaxLossLayer(LossLayer):
 
     def Forward_cpu(self, bottom, top):
         data = bottom[0].data()
-        data = numpy.exp(data - numpy.max(data, axis=1, keepdims=True))
-        self.probs_ = data/numpy.sum(data, axis=1, keepdims=True)
+        data1 = numpy.exp(data - numpy.max(data, axis=1, keepdims=True))
+        self.probs_ = data1/numpy.sum(data1, axis=1, keepdims=True)
         N = data.shape[0]
         label   = bottom[1].data()
-        loss    = numpy.sum(numpy.multiply( (-label), (numpy.log(self.probs_)) ))/N
+        loss    = -numpy.sum(numpy.log(numpy.sum(numpy.multiply( label, self.probs_),axis=1)))/N
         top[0].set_data(loss)
 
     def Backward_cpu(self, top, propagate_down, bottom):

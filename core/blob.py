@@ -90,10 +90,10 @@ class Blob:
         return numpy.sum(numpy.abs(self.diff_))
 
     def sumsq_data(self):
-        return numpy.sum(numpy.dot(self.data_, self.data_))
+        return numpy.sum(numpy.square(self.data_))
 
     def sumsq_diff(self):
-        return numpy.sum(numpy.dot(self.diff_, self.diff_))
+        return numpy.sum(numpy.square(self.diff_))
 
     def data_at(self, indices):
         return self.data_[indices]

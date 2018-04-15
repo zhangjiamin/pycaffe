@@ -168,10 +168,12 @@ class TestLayer(unittest.TestCase):
 
         layers = []
 
-        fc1  = InnerProductLayer(1,784,384)
+        batch_size = 100
+
+        fc1  = InnerProductLayer(batch_size,784,392)
         relu = ReLULayer()
-        drop = DropoutLayer(0.5)
-        fc2  = InnerProductLayer(1,384,10)
+        drop = DropoutLayer(0.7)
+        fc2  = InnerProductLayer(batch_size,392,10)
         softmaxloss = SoftmaxLossLayer()
 
         layers.append(fc1)
@@ -180,10 +182,10 @@ class TestLayer(unittest.TestCase):
         layers.append(fc2)
         layers.append(softmaxloss)
 
-        bottom.set_data(train_set_x[0])
-        label.set_data(train_set_y[0])
-        bottom.Reshape((1,784))
-        label.Reshape((1,10))
+        bottom.set_data(train_set_x[0:batch_size])
+        label.set_data(train_set_y[0:batch_size])
+        bottom.Reshape((batch_size,784))
+        label.Reshape((batch_size,10))
 
         bottoms = []
         tops = []
@@ -208,37 +210,51 @@ class TestLayer(unittest.TestCase):
         blobs = fc1.blobs()
         blobs.extend(fc2.blobs())
 
+        history = []
+        for i in range(len(blobs)):
+            h = Blob()
+            h.ReshapeLike(blobs[i])
+            history.append(h)
+
+        lr = 0.2
+        eps = 1e-8
+
         for j in range(100):
             count = 0
-            for i in range(test_set_x.shape[0]):
-                bottom.set_data(test_set_x[i])
-                label.set_data(test_set_y[i])
-                bottom.Reshape((1,784))
-                label.Reshape((1,10))
+            total = 0
+            
+            for i in range(0, test_set_x.shape[0], batch_size):
+                bottom.set_data(test_set_x[i:batch_size+i])
+                label.set_data(test_set_y[i:batch_size+i])
+                bottom.Reshape((batch_size,784))
+                label.Reshape((batch_size,10))
 
                 for ii in range(len(layers)):
                     layers[ii].Forward(bottoms[ii], tops[ii])
-     
-                if np.argmax(softmaxloss.probs_) == np.argmax(test_set_y[i]):
-                    count = count + 1
+    
+                count = count + np.sum( np.equal( np.argmax(softmaxloss.probs_,axis=1), np.argmax(test_set_y[i:i+batch_size],axis=1) ) )
+                total = total + batch_size
 
-            print 'Accurary:', j, count, test_set_x.shape[0], count*1.0/test_set_x.shape[0]
+            print 'Accurary:', j, count, total, count*1.0/total
 
-            for i in range(train_set_x.shape[0]):
-                bottom.set_data(train_set_x[i])
-                label.set_data(train_set_y[i])
-                bottom.Reshape((1,784))
-                label.Reshape((1,10))
+            for i in range(0, train_set_x.shape[0], batch_size):
+                bottom.set_data(train_set_x[i:i+batch_size])
+                label.set_data(train_set_y[i:i+batch_size])
+                bottom.Reshape((batch_size,784))
+                label.Reshape((batch_size,10))
 
                 for ii in range(len(layers)):
                     layers[ii].Forward(bottoms[ii], tops[ii])
        
-                loss.set_diff(loss.data()*0.01)
+                loss.set_diff(loss.data())
 
                 for ii in reversed(range(len(layers))):
                     layers[ii].Backward(tops[ii], [], bottoms[ii])
 
                 for ii in range(len(blobs)):
+                    history[ii].set_data( history[ii].data() + np.square( blobs[ii].diff() ) )
+                    runing_lr = lr/np.sqrt( history[ii].data() + eps )
+                    blobs[ii].set_diff( runing_lr*blobs[ii].diff() )
                     blobs[ii].Update()
 
 if __name__ == '__main__':
