@@ -172,7 +172,7 @@ class TestLayer(unittest.TestCase):
 
         fc1  = InnerProductLayer(batch_size,784,392)
         relu = ReLULayer()
-        drop = DropoutLayer(1.0)
+        drop = DropoutLayer(0.75)
         fc2  = InnerProductLayer(batch_size,392,10)
         softmaxloss = SoftmaxLossLayer()
 
@@ -210,16 +210,24 @@ class TestLayer(unittest.TestCase):
         blobs = fc1.blobs()
         blobs.extend(fc2.blobs())
 
-        history = []
-        for i in range(len(blobs)):
-            h = Blob()
-            h.ReshapeLike(blobs[i])
-            history.append(h)
+        b1 = 0.9
+        b2 = 0.999
+        s = []
+        r = []
 
-        lr = 0.2
+        for i in range(len(blobs)):
+            t1 = Blob()
+            t2 = Blob()
+            t1.ReshapeLike(blobs[i])
+            t2.ReshapeLike(blobs[i])
+            s.append(t1)
+            r.append(t2)
+
+        lr = 0.001
         eps = 1e-8
 
-        for j in range(1000):
+        t = 1
+        for j in range(100):
             count = 0
             total = 0
             
@@ -235,7 +243,7 @@ class TestLayer(unittest.TestCase):
                 count = count + np.sum( np.equal( np.argmax(softmaxloss.probs_,axis=1), np.argmax(test_set_y[i:i+batch_size],axis=1) ) )
                 total = total + batch_size
 
-            print 'Accurary:', j, count, total, count*1.0/total
+            print 'Accuracy:', j, count, total, count*1.0/total
 
             for i in range(0, train_set_x.shape[0], batch_size):
                 bottom.set_data(train_set_x[i:i+batch_size])
@@ -252,10 +260,15 @@ class TestLayer(unittest.TestCase):
                     layers[ii].Backward(tops[ii], [], bottoms[ii])
 
                 for ii in range(len(blobs)):
-                    history[ii].set_data( history[ii].data() + np.square( blobs[ii].diff() ) )
-                    runing_lr = lr/np.sqrt( history[ii].data() + eps )
+                    s[ii].set_data( b1*s[ii].data() + (1.0 - b1)*blobs[ii].diff()  )
+                    r[ii].set_data( b2*r[ii].data() + (1.0 - b2)*np.square(blobs[ii].diff())  )
+                    s_ = s[ii].data()/(1.0-np.power(b1,t))
+                    r_ = r[ii].data()/(1.0-np.power(b2,t))
+                    runing_lr = lr*s_/(np.sqrt(r_) + eps)
                     blobs[ii].set_diff( runing_lr*blobs[ii].diff() )
                     blobs[ii].Update()
+               
+                t = t + 1
 
 if __name__ == '__main__':
     unittest.main()
