@@ -87,10 +87,13 @@ if __name__ == '__main__':
     layer.Setup([bottom], [top])
 
     layer.Forward([bottom], [top])
+
+    top.set_diff( numpy.arange(16)*1.0 )
+    top.Reshape((4,4))
     layer.Backward([top], [], [bottom])
     
     print bottom.data()
     print layer.rand_blob_.data()
     print layer.scale_
     print top.data()
-
+    print bottom.diff()
