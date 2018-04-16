@@ -13,12 +13,13 @@ class SoftmaxLossLayer(LossLayer):
 
     def Reshape(self, bottom, top):
         LossLayer.Reshape(self, bottom, top)
+        top[1].ReshapeLike(bottom[0])
 
     def type(self):
         return 'SoftmaxLoss'
 
     def ExactNumTopBlobs(self):
-        return 1
+        return 2
 
     def MinTopBlobs(self):
         return 1
@@ -32,9 +33,9 @@ class SoftmaxLossLayer(LossLayer):
         self.probs_ = data1/numpy.sum(data1, axis=1, keepdims=True)
         Count = data.shape[0]
         label   = bottom[1].data()
-        #probs   = numpy.sum(numpy.multiply( label, self.probs_),axis=1)
         loss    = -numpy.sum(numpy.multiply((label), numpy.log(numpy.where(self.probs_>1.175494351e-38, self.probs_, 1.175494351e-38))))/Count
         top[0].set_data(loss)
+        top[1].set_data(self.probs_)
 
     def Backward_cpu(self, top, propagate_down, bottom):
         label = bottom[1].data()

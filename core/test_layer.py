@@ -34,19 +34,20 @@ class TestLayer(unittest.TestCase):
         bottom_1.Reshape([1,6])
 
         top = Blob()
+        top1 = Blob()
         top.set_diff(10.0)
 
         layer = SoftmaxLossLayer()
 
         for i in range(10):
-            layer.Setup([bottom_0, bottom_1], [top])
-            layer.Forward([bottom_0, bottom_1], [top])
+            layer.Setup([bottom_0, bottom_1], [top,top1])
+            layer.Forward([bottom_0, bottom_1], [top,top1])
             print 'SoftmaxLoss:'
 
             print 'bot.data(%d):',i,bottom_0.data()
             print 'top.data(%d):',i,top.data()
             top.set_diff(top.data())
-            layer.Backward([top], [], [bottom_0, bottom_1])
+            layer.Backward([top,top1], [], [bottom_0, bottom_1])
             print 'bot.diff(%d):',i,bottom_0.diff()
             bottom_0.set_diff(bottom_0.diff()*(0.01))
             bottom_0.Update()
@@ -142,18 +143,11 @@ class TestLayer(unittest.TestCase):
         relu1 = ReLULayer()
         relu1.Setup([top1], [top2])
         relu1.Forward([top1], [top2])
-        #layer.Backward([top], [], [bottom])
 
         print 'bottom',bottom.data(),bottom.data().shape
         print 'top',top.data(),top.data().shape
         print 'top1',top1.data(),top1.data().shape
         print 'top2',top2.data(),top2.data().shape
-
-        #print 'W',layer.W.data(),layer.W.data().shape
-        #print 'b',layer.b.data(),layer.b.data().shape
-        #print 'top.diff',top.diff(),top.data().shape
-        #print 'W.diff',layer.W.diff(),layer.W.data().shape
-        #print 'b.diff',layer.b.diff(),layer.b.data().shape
 
     def test_mnist_mlp(self):
         datasets = load_data('mnist.pkl.gz')
@@ -168,6 +162,7 @@ class TestLayer(unittest.TestCase):
         top2   = Blob()
         loss   = Blob()
         top4   = Blob()
+        top5   = Blob()
 
         layers = []
 
@@ -203,8 +198,9 @@ class TestLayer(unittest.TestCase):
 
         bottoms.append([top4])
         tops.append([top2])
+
         bottoms.append([top2,label])
-        tops.append([loss])
+        tops.append([loss,top5])
 
         for i in range(len(layers)):
             layers[i].Setup(bottoms[i], tops[i])
@@ -284,6 +280,7 @@ class TestLayer(unittest.TestCase):
         top2   = Blob()
         loss   = Blob()
         top4   = Blob()
+        top5   = Blob()
 
         batch_size = 100
 
@@ -299,7 +296,7 @@ class TestLayer(unittest.TestCase):
         net.AddLayer(relu, [top], [top1])
         net.AddLayer(drop, [top1], [top4])
         net.AddLayer(fc2, [top4], [top2])
-        net.AddLayer(softmaxloss, [top2,label], [loss])
+        net.AddLayer(softmaxloss, [top2,label], [loss,top5])
 
         b1 = 0.9
         b2 = 0.999
