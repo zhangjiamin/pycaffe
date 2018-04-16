@@ -1,3 +1,4 @@
+from blob import Blob
 
 class Net:
 
@@ -6,6 +7,15 @@ class Net:
         self.bottoms_ = []
         self.tops_    = []
         self.learnable_params_ = []
+
+    def AddLayer(self, layer):
+        self.layers_.append(layer)
+        bottoms = []
+        for i in range(layer.ExactNumBottomBlobs()):
+            bottoms.append(Blob())
+        tops = []
+        for i in range(layer.ExactNumTopBlobs()):
+            tops.append(Blob())
 
     def Forward(self, loss):
         loss_ = 0

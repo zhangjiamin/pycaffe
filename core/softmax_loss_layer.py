@@ -18,7 +18,7 @@ class SoftmaxLossLayer(LossLayer):
         return 'SoftmaxLoss'
 
     def ExactNumTopBlobs(self):
-        return -1
+        return 1
 
     def MinTopBlobs(self):
         return 1
