@@ -16,6 +16,9 @@ class Net:
     def output_blobs(self):
         return self.net_output_blobs_
 
+    def learnable_params(self):
+        return self.learnable_params_
+
     def AddLayer(self, layer, bottoms, tops):
         self.layers_.append(layer)
         self.bottoms_.append(bottoms)
