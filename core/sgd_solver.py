@@ -11,6 +11,14 @@ class SGDSolver(Solver):
     def type(self):
         return 'SGD'
 
+    def AddTrainNet(self, net):
+        Solver.AddTrainNet(self, net)
+        params = self.net_.learnable_params()
+        for i in range(len(params)):
+            blob = Blob()
+            blob.ReshapeLike(params[i])
+            self.history_.append(blob)
+
     def ApplyUpdate(self):
         rate = self.GetLearningRate()
         self.ClipGradients()
