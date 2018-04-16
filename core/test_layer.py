@@ -5,6 +5,8 @@ from blob import Blob
 from load_data import load_data
 from net import Net
 
+from mnist_train_data_layer import MNISTTrainDataLayer
+from mnist_test_data_layer import MNISTTestDataLayer
 from inner_product_layer import InnerProductLayer
 from softmax_layer import SoftMaxLayer
 from conv_layer import ConvolutionLayer
@@ -274,10 +276,6 @@ class TestLayer(unittest.TestCase):
 
     def test_mnist_mlp_net(self):
         net = Net()
-        datasets = load_data('mnist.pkl.gz')
-        train_set_x, train_set_y = datasets[0]
-        valid_set_x, valid_set_y = datasets[1]
-        test_set_x, test_set_y = datasets[2]
 
         bottom = Blob()
         label  = Blob()
@@ -289,17 +287,14 @@ class TestLayer(unittest.TestCase):
 
         batch_size = 100
 
+        train = MNISTTrainDataLayer(batch_size)
         fc1  = InnerProductLayer(batch_size,784,392)
         relu = ReLULayer()
         drop = DropoutLayer(1.0)
         fc2  = InnerProductLayer(batch_size,392,10)
         softmaxloss = SoftmaxLossLayer()
 
-        bottom.set_data(train_set_x[0:batch_size])
-        label.set_data(train_set_y[0:batch_size])
-        bottom.Reshape((batch_size,784))
-        label.Reshape((batch_size,10))
-
+        net.AddLayer(train, [], [bottom,label])
         net.AddLayer(fc1, [bottom], [top])
         net.AddLayer(relu, [top], [top1])
         net.AddLayer(drop, [top1], [top4])
@@ -328,27 +323,15 @@ class TestLayer(unittest.TestCase):
             count = 0
             total = 0
             
-            for i in range(0, test_set_x.shape[0], batch_size):
-                bottom.set_data(test_set_x[i:batch_size+i])
-                label.set_data(test_set_y[i:batch_size+i])
-                bottom.Reshape((batch_size,784))
-                label.Reshape((batch_size,10))
-
+            for i in range(100):
                 net.Forward()
-    
-                count = count + np.sum( np.equal( np.argmax(softmaxloss.probs_,axis=1), np.argmax(test_set_y[i:i+batch_size],axis=1) ) )
+                count = count + np.sum( np.equal( np.argmax(softmaxloss.probs_,axis=1), np.argmax(label.data(),axis=1) ) )
                 total = total + batch_size
 
             print 'Accuracy:', j, count, total, count*1.0/total
 
-            for i in range(0, train_set_x.shape[0], batch_size):
-                bottom.set_data(train_set_x[i:i+batch_size])
-                label.set_data(train_set_y[i:i+batch_size])
-                bottom.Reshape((batch_size,784))
-                label.Reshape((batch_size,10))
-
+            for i in range(500):
                 net.ForwardBackward()
-
                 t += 1
 
                 blobs = net.learnable_params_
