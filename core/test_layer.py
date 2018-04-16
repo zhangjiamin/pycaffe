@@ -172,7 +172,7 @@ class TestLayer(unittest.TestCase):
 
         fc1  = InnerProductLayer(batch_size,784,392)
         relu = ReLULayer()
-        drop = DropoutLayer(0.75)
+        drop = DropoutLayer(1.0)
         fc2  = InnerProductLayer(batch_size,392,10)
         softmaxloss = SoftmaxLossLayer()
 
@@ -226,8 +226,9 @@ class TestLayer(unittest.TestCase):
         lr = 0.001
         eps = 1e-8
 
-        t = 1
-        for j in range(100):
+        t = 0
+        runing_lr = 0
+        for j in range(1000):
             count = 0
             total = 0
             
@@ -254,11 +255,11 @@ class TestLayer(unittest.TestCase):
                 loss_ = 0
                 for ii in range(len(layers)):
                     loss_ += layers[ii].Forward(bottoms[ii], tops[ii])
-       
-                loss.set_diff(loss_)
 
                 for ii in reversed(range(len(layers))):
                     layers[ii].Backward(tops[ii], [], bottoms[ii])
+
+                t += 1
 
                 for ii in range(len(blobs)):
                     s[ii].set_data( b1*s[ii].data() + (1.0 - b1)*blobs[ii].diff()  )
@@ -266,10 +267,10 @@ class TestLayer(unittest.TestCase):
                     s_ = s[ii].data()/(1.0-np.power(b1,t))
                     r_ = r[ii].data()/(1.0-np.power(b2,t))
                     runing_lr = lr*s_/(np.sqrt(r_) + eps)
-                    blobs[ii].set_diff( runing_lr*blobs[ii].diff() )
+                    blobs[ii].set_diff( runing_lr )
                     blobs[ii].Update()
+                    blobs[ii].set_diff( numpy.zeros(blobs[ii].shape()) )
                
-                t = t + 1
 
 if __name__ == '__main__':
     unittest.main()

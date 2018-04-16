@@ -43,10 +43,10 @@ class ReLULayer(NeuronLayer):
         return 'ReLU'
 
     def Forward_cpu(self, bottom, top):
-        top[0].set_data( numpy.maximum(bottom[0].data(), 0))
+        top[0].set_data( numpy.maximum(bottom[0].data(), 0.0))
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        bottom[0].set_diff((bottom[0].data()>0)*top[0].diff())
+        bottom[0].set_diff((bottom[0].data()>0.0)*top[0].diff())
 
 class DropoutLayer(NeuronLayer):
 
