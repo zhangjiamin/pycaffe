@@ -6,6 +6,8 @@ class Solver:
         self.current_step_ = 0;
         self.net_ = None
         self.test_net_ = None
+        self.test_interval_ = 100
+        self.test_count_ = 100
 
     def AddTrainNet(self, net):
         self.net_ = net
@@ -14,7 +16,7 @@ class Solver:
         self.test_net_ = net
 
     def Solve(self):
-        pass
+        self.Step(20000)
 
     def Step(self, iters):
         start_iter = self.iter_
@@ -26,6 +28,9 @@ class Solver:
 
             self.ApplyUpdate()
             self.iter_ += 1
+
+            if self.iter_ % self.test_interval_ == 0:
+                self.Test()
 
     def net(self):
         return self.net_
@@ -43,6 +48,12 @@ class Solver:
         pass
 
     def Test(self):
-        pass
-
-    
+        count = 0
+        total = 0
+        for i in self.test_count_:
+            self.test_net_.Forward()
+            count = count + self.test_net_.output_blobs()[0].data()
+            total = total + self.test_net_.output_blobs()[1].data()
+   
+        print 'Accuracy:',count*0.1/total*0.1
+ 
