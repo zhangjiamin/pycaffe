@@ -5,6 +5,7 @@ from blob import Blob
 from load_data import load_data
 from net import Net
 
+from accuracy_layer import AccuracyLayer
 from mnist_train_data_layer import MNISTTrainDataLayer
 from mnist_test_data_layer import MNISTTestDataLayer
 from inner_product_layer import InnerProductLayer
@@ -271,7 +272,8 @@ class TestLayer(unittest.TestCase):
                     blobs[ii].set_diff( numpy.zeros(blobs[ii].shape()) )
 
     def test_mnist_mlp_net(self):
-        net = Net()
+        train_net = Net()
+        test_net = Net()
 
         bottom = Blob()
         label  = Blob()
@@ -281,33 +283,47 @@ class TestLayer(unittest.TestCase):
         loss   = Blob()
         top4   = Blob()
         top5   = Blob()
+        top6   = Blob()
+        top7   = Blob()
+
 
         batch_size = 100
 
+        test = MNISTTestDataLayer(batch_size)
         train = MNISTTrainDataLayer(batch_size)
+        acc   = AccuracyLayer()
+
         fc1  = InnerProductLayer(batch_size,784,392)
         relu = ReLULayer()
         drop = DropoutLayer(1.0)
         fc2  = InnerProductLayer(batch_size,392,10)
         softmaxloss = SoftmaxLossLayer()
 
-        net.AddLayer(train, [], [bottom,label])
-        net.AddLayer(fc1, [bottom], [top])
-        net.AddLayer(relu, [top], [top1])
-        net.AddLayer(drop, [top1], [top4])
-        net.AddLayer(fc2, [top4], [top2])
-        net.AddLayer(softmaxloss, [top2,label], [loss,top5])
+        train_net.AddLayer(train, [], [bottom,label])
+        train_net.AddLayer(fc1, [bottom], [top])
+        train_net.AddLayer(relu, [top], [top1])
+        train_net.AddLayer(drop, [top1], [top4])
+        train_net.AddLayer(fc2, [top4], [top2])
+        train_net.AddLayer(softmaxloss, [top2,label], [loss,top5])
+
+        test_net.AddLayer(test, [], [bottom,label])
+        test_net.AddLayer(fc1, [bottom], [top])
+        test_net.AddLayer(relu, [top], [top1])
+        test_net.AddLayer(drop, [top1], [top4])
+        test_net.AddLayer(fc2, [top4], [top2])
+        test_net.AddLayer(softmaxloss, [top2,label], [loss,top5])
+        test_net.AddLayer(acc, [top5,label], [top6,top7])
 
         b1 = 0.9
         b2 = 0.999
         s = []
         r = []
 
-        for i in range(len(net.learnable_params_)):
+        for i in range(len(train_net.learnable_params_)):
             t1 = Blob()
             t2 = Blob()
-            t1.ReshapeLike(net.learnable_params_[i])
-            t2.ReshapeLike(net.learnable_params_[i])
+            t1.ReshapeLike(train_net.learnable_params_[i])
+            t2.ReshapeLike(train_net.learnable_params_[i])
             s.append(t1)
             r.append(t2)
 
@@ -321,17 +337,16 @@ class TestLayer(unittest.TestCase):
             total = 0
             
             for i in range(100):
-                net.Forward()
-                count = count + np.sum( np.equal( np.argmax(softmaxloss.probs_,axis=1), np.argmax(label.data(),axis=1) ) )
-                total = total + batch_size
+                test_net.Forward()
+                count = count + top6.data()
+                total = total + top7.data()
 
             print 'Accuracy:', j, count, total, count*1.0/total
 
             for i in range(500):
-                net.ForwardBackward()
+                train_net.ForwardBackward()
                 t += 1
-
-                blobs = net.learnable_params_
+                blobs = train_net.learnable_params_
 
                 for ii in range(len(blobs)):
                     s[ii].set_data( b1*s[ii].data() + (1.0 - b1)*blobs[ii].diff()  )
@@ -341,8 +356,8 @@ class TestLayer(unittest.TestCase):
                     runing_lr = lr*s_/(np.sqrt(r_) + eps)
                     blobs[ii].set_diff( runing_lr )
 
-                net.Update()
-                net.ClearParamDiffs()
+                train_net.Update()
+                train_net.ClearParamDiffs()
               
 
 if __name__ == '__main__':
