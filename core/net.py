@@ -15,7 +15,8 @@ class Net:
         loss = loss_
 
     def ClearParamDiffs(self):
-        pass
+        for i in range(len(self.learnable_params_)):
+            self.learnable_params_[i].set_diff( numpy.zeros(blobs[ii].shape()) )
 
     def Backward(self):
         for i in reversed(range(len(self.layers_))):
@@ -25,11 +26,15 @@ class Net:
         pass
 
     def ForwardBackward(self):
-        pass
+        loss =0;
+        self.Forward(loss);
+        self.Backward();
+        return loss;
 
     def Update(self):
-        pass
+        for i in range(len(self.learnable_params_)):
+            self.learnable_params_[i].Update()
  
-
 if __name__ == '__main__':
     print 'Net Class'
+
