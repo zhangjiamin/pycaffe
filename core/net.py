@@ -1,4 +1,5 @@
 from blob import Blob
+import numpy
 
 class Net:
 
@@ -8,25 +9,23 @@ class Net:
         self.tops_    = []
         self.learnable_params_ = []
 
-    def AddLayer(self, layer):
+    def AddLayer(self, layer, bottoms, tops):
         self.layers_.append(layer)
-        bottoms = []
-        for i in range(layer.ExactNumBottomBlobs()):
-            bottoms.append(Blob())
-        tops = []
-        for i in range(layer.ExactNumTopBlobs()):
-            tops.append(Blob())
+        self.bottoms_.append(bottoms)
+        self.tops_.append(tops)
+        self.learnable_params_.extend(layer.blobs())
+        layer.Setup(bottoms, tops)
 
-    def Forward(self, loss):
+    def Forward(self):
         loss_ = 0
-        for i in range(len(layers_)):
+        for i in range(len(self.layers_)):
             loss_ += self.layers_[i].Forward(self.bottoms_[i], self.tops_[i])
 
-        loss = loss_
+        return loss_
 
     def ClearParamDiffs(self):
         for i in range(len(self.learnable_params_)):
-            self.learnable_params_[i].set_diff( numpy.zeros(blobs[ii].shape()) )
+            self.learnable_params_[i].set_diff( numpy.zeros(self.learnable_params_[i].shape()) )
 
     def Backward(self):
         for i in reversed(range(len(self.layers_))):
@@ -38,7 +37,7 @@ class Net:
 
     def ForwardBackward(self):
         loss =0;
-        self.Forward(loss);
+        loss = self.Forward();
         self.Backward();
         return loss;
 
