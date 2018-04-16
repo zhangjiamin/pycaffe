@@ -33,7 +33,8 @@ class Net:
             self.layers_[i].Backward(self.tops_[i], [], self.bottoms_[i])
 
     def Reshape(self):
-        pass
+        for i in range(len(layers_)):
+            self.layers_[i].Reshape(self.bottoms_[i], self.tops_[i])
 
     def ForwardBackward(self):
         loss =0;
