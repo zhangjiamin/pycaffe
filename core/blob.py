@@ -4,7 +4,7 @@ class Blob:
 
     def __init__(self):
         self.shape_ = None
-        self.dtype_ = numpy.float32
+        self.dtype_ = numpy.float64
         self.data_  = None
         self.diff_  = None
 

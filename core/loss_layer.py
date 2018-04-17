@@ -6,7 +6,7 @@ class LossLayer(Layer):
 
     def __init__(self):
         Layer.__init__(self)
-        self.loss_.append(1)
+        self.loss_.append(1.0)
 
     def LayerSetup(self, bottom, top):
         pass

@@ -23,13 +23,12 @@ class Solver:
         stop_iter  = self.iter_ + iters
 
         while self.iter_ < stop_iter:
+            if self.iter_ % self.test_interval_ == 0:
+                self.Test()
             self.net_.ClearParamDiffs()
             self.net_.ForwardBackward()
             self.ApplyUpdate()
-
             self.iter_ += 1
-            if self.iter_ % self.test_interval_ == 0:
-                self.Test()
 
     def net(self):
         return self.net_

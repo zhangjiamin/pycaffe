@@ -5,6 +5,7 @@ from blob import Blob
 from load_data import load_data
 from net import Net
 from sgd_solver import SGDSolver
+from adagrad_solver import AdaGradSolver
 
 from accuracy_layer import AccuracyLayer
 from mnist_train_data_layer import MNISTTrainDataLayer
@@ -383,10 +384,10 @@ class TestLayer(unittest.TestCase):
         train = MNISTTrainDataLayer(batch_size)
         acc   = AccuracyLayer()
 
-        fc1  = InnerProductLayer(batch_size,784,392)
+        fc1  = InnerProductLayer(batch_size,784,300)
         relu = ReLULayer()
         drop = DropoutLayer(1.0)
-        fc2  = InnerProductLayer(batch_size,392,10)
+        fc2  = InnerProductLayer(batch_size,300,10)
         softmaxloss = SoftmaxLossLayer()
 
         train_net.AddLayer(train, [], [bottom,label])
@@ -407,7 +408,7 @@ class TestLayer(unittest.TestCase):
         test_net.AddOutputBlob(top6)
         test_net.AddOutputBlob(top7)
 
-        solver = SGDSolver()
+        solver = AdaGradSolver()
         solver.AddTrainNet(train_net)
         solver.AddTestNet(test_net)
         solver.Solve(50000)

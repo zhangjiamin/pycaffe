@@ -57,7 +57,7 @@ class DropoutLayer(NeuronLayer):
         if 1.0 == threshold:
             self.scale_ = 1.0
         else:
-            self.scale_     = 1.0/(1.0-threshold)
+            self.scale_ = 1.0/(1.0-threshold)
 
     def type(self):
         return 'Dropout'

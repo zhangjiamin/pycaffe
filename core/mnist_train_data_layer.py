@@ -16,6 +16,12 @@ class MNISTTrainDataLayer(Layer):
         self.train_set_x, self.train_set_y = self.datasets_[0]
         self.valid_set_x, self.valid_set_y = self.datasets_[1]
         self.test_set_x,  self.test_set_y  = self.datasets_[2]
+        print self.train_set_x.shape
+        print self.train_set_y.shape
+        print self.valid_set_x.shape
+        print self.valid_set_y.shape
+        print self.test_set_x.shape
+        print self.test_set_y.shape
 
     def Reshape(self, bottom, top):
         top0_shape = (self.batch_size_, 784)
