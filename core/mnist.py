@@ -125,6 +125,7 @@ class DataSet(object):
   @property
   def epochs_completed(self):
     return self._epochs_completed
+
   def next_batch(self, batch_size, fake_data=False, shuffle=True):
     """Return the next `batch_size` examples from this data set."""
     if fake_data:
@@ -225,4 +226,6 @@ def load_mnist(train_dir='MNIST_data'):
 
 
 if __name__ == '__main__':
-    load_mnist()
+    a = load_mnist()
+    b = a[0].next_batch(100)
+    print b
