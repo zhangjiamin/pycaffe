@@ -1,3 +1,4 @@
+from blob import Blob
 from solver import Solver
 
 class SGDSolver(Solver):
@@ -34,9 +35,11 @@ class SGDSolver(Solver):
         return self.lr_
 
     def Normalize(self, param):
+        return
         param.set_diff(1.0/20000 * param.diff())
 
     def Regularize(self, param):
+        return
         weight_decay = 0.0005
         param.set_diff( param.diff() + weight_decay*param.data() )
 

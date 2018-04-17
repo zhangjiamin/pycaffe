@@ -15,8 +15,8 @@ class Solver:
     def AddTestNet(self, net):
         self.test_net_ = net
 
-    def Solve(self):
-        self.Step(20000)
+    def Solve(self, iters):
+        self.Step(iters)
 
     def Step(self, iters):
         start_iter = self.iter_
@@ -25,10 +25,9 @@ class Solver:
         while self.iter_ < stop_iter:
             self.net_.ClearParamDiffs()
             self.net_.ForwardBackward()
-
             self.ApplyUpdate()
-            self.iter_ += 1
 
+            self.iter_ += 1
             if self.iter_ % self.test_interval_ == 0:
                 self.Test()
 
@@ -50,10 +49,10 @@ class Solver:
     def Test(self):
         count = 0
         total = 0
-        for i in self.test_count_:
+        for i in range(self.test_count_):
             self.test_net_.Forward()
             count = count + self.test_net_.output_blobs()[0].data()
             total = total + self.test_net_.output_blobs()[1].data()
    
-        print 'Accuracy:',count*0.1/total*0.1
+        print 'Accuracy:',count*1.0/total
  

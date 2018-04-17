@@ -4,6 +4,7 @@ import numpy as np
 from blob import Blob
 from load_data import load_data
 from net import Net
+from sgd_solver import SGDSolver
 
 from accuracy_layer import AccuracyLayer
 from mnist_train_data_layer import MNISTTrainDataLayer
@@ -272,6 +273,7 @@ class TestLayer(unittest.TestCase):
                     blobs[ii].set_diff( numpy.zeros(blobs[ii].shape()) )
 
     def test_mnist_mlp_net(self):
+        return
         train_net = Net()
         test_net = Net()
 
@@ -359,6 +361,56 @@ class TestLayer(unittest.TestCase):
                 train_net.Update()
                 train_net.ClearParamDiffs()
               
+    def test_mnist_mlp_net_solver(self):
+        train_net = Net()
+        test_net = Net()
+
+        bottom = Blob()
+        label  = Blob()
+        top    = Blob()
+        top1   = Blob()
+        top2   = Blob()
+        loss   = Blob()
+        top4   = Blob()
+        top5   = Blob()
+        top6   = Blob()
+        top7   = Blob()
+
+
+        batch_size = 100
+
+        test = MNISTTestDataLayer(batch_size)
+        train = MNISTTrainDataLayer(batch_size)
+        acc   = AccuracyLayer()
+
+        fc1  = InnerProductLayer(batch_size,784,392)
+        relu = ReLULayer()
+        drop = DropoutLayer(1.0)
+        fc2  = InnerProductLayer(batch_size,392,10)
+        softmaxloss = SoftmaxLossLayer()
+
+        train_net.AddLayer(train, [], [bottom,label])
+        train_net.AddLayer(fc1, [bottom], [top])
+        train_net.AddLayer(relu, [top], [top1])
+        train_net.AddLayer(drop, [top1], [top4])
+        train_net.AddLayer(fc2, [top4], [top2])
+        train_net.AddLayer(softmaxloss, [top2,label], [loss,top5])
+
+        test_net.AddLayer(test, [], [bottom,label])
+        test_net.AddLayer(fc1, [bottom], [top])
+        test_net.AddLayer(relu, [top], [top1])
+        test_net.AddLayer(drop, [top1], [top4])
+        test_net.AddLayer(fc2, [top4], [top2])
+        test_net.AddLayer(softmaxloss, [top2,label], [loss,top5])
+        test_net.AddLayer(acc, [top5,label], [top6,top7])
+
+        test_net.AddOutputBlob(top6)
+        test_net.AddOutputBlob(top7)
+
+        solver = SGDSolver()
+        solver.AddTrainNet(train_net)
+        solver.AddTestNet(test_net)
+        solver.Solve(50000)
 
 if __name__ == '__main__':
     unittest.main()
