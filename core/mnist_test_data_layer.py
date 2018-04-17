@@ -2,6 +2,7 @@ from layer import Layer
 from blob import Blob
 import numpy
 from load_data import load_data
+from mnist import load_mnist
 
 class MNISTTestDataLayer(Layer):
 
