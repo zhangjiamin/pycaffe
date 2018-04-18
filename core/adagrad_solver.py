@@ -8,7 +8,7 @@ class AdaGradSolver(SGDSolver):
     def __init__(self):
         SGDSolver.__init__(self)
         self.lr_ = 0.3
-        self.delta_ = 1e-7
+        self.delta_ = 1e-8
 
     def type(self):
         return 'AdaGrad'

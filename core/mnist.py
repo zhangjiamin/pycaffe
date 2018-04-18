@@ -222,7 +222,7 @@ def read_data_sets(train_dir,
 
 
 def load_mnist(train_dir='MNIST_data'):
-  return read_data_sets(train_dir)
+  return read_data_sets(train_dir,one_hot=True)
 
 
 if __name__ == '__main__':

@@ -8,8 +8,10 @@ from sgd_solver import SGDSolver
 from adagrad_solver import AdaGradSolver
 
 from accuracy_layer import AccuracyLayer
-from mnist_train_data_layer import MNISTTrainDataLayer
-from mnist_test_data_layer import MNISTTestDataLayer
+#from mnist_train_data_layer import MNISTTrainDataLayer
+#from mnist_test_data_layer import MNISTTestDataLayer
+from new_mnist_train_data_layer import MNISTTrainDataLayer
+from new_mnist_test_data_layer import MNISTTestDataLayer
 from inner_product_layer import InnerProductLayer
 from softmax_layer import SoftMaxLayer
 from conv_layer import ConvolutionLayer
