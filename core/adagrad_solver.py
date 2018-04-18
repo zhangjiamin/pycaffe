@@ -7,7 +7,7 @@ class AdaGradSolver(SGDSolver):
 
     def __init__(self):
         SGDSolver.__init__(self)
-        self.lr_ = 0.3
+        self.lr_ = 0.5
         self.delta_ = 1e-8
 
     def type(self):
@@ -41,7 +41,7 @@ class AdaGradSolver(SGDSolver):
 
     def Regularize(self, param):
         return
-        weight_decay = 0.0005
+        weight_decay = 0.00005
         param.set_diff( param.diff() + weight_decay*param.data() )
 
     def ClipGradients(self):

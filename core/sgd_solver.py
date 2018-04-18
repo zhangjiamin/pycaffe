@@ -39,7 +39,6 @@ class SGDSolver(Solver):
         param.set_diff(1.0/20000 * param.diff())
 
     def Regularize(self, param):
-        return
         weight_decay = 0.0005
         param.set_diff( param.diff() + weight_decay*param.data() )
 

@@ -65,12 +65,14 @@ class DropoutLayer(NeuronLayer):
     def LayerSetup(self, bottom, top):
         self.rand_blob_.ReshapeLike(bottom[0])
         self.rand_blob_.set_data( numpy.random.binomial(n=1, p=self.threshold_, size=bottom[0].data().shape) )
+        self.rand_blob_.ReshapeLike(bottom[0])
 
     def Reshape(self, bottom, top):
         NeuronLayer.Reshape(self, bottom, top)
         self.rand_blob_.ReshapeLike(bottom[0])
 
     def Forward_cpu(self, bottom, top):
+        self.rand_blob_.ReshapeLike(bottom[0])
         self.rand_blob_.set_data( numpy.random.binomial(n=1, p=self.threshold_, size=bottom[0].data().shape) )
         self.rand_blob_.ReshapeLike(bottom[0])
         top[0].set_data( numpy.multiply(bottom[0].data(), self.rand_blob_.data()*self.scale_) )

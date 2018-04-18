@@ -33,7 +33,7 @@ class SoftmaxLossLayer(LossLayer):
         self.probs_ = data1/numpy.sum(data1, axis=1, keepdims=True)
         Count = data.shape[0]
         label   = bottom[1].data()
-        loss    = -numpy.sum(numpy.multiply((label), numpy.log(numpy.where(self.probs_>1.175494351e-38, self.probs_, 1.175494351e-38))))/Count
+        loss    = -numpy.sum(numpy.multiply((label), numpy.log(numpy.where(self.probs_>2.220446049250313e-16, self.probs_, 2.220446049250313e-16))))/Count
         top[0].set_data(loss)
         top[1].set_data(self.probs_)
 

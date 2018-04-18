@@ -32,11 +32,14 @@ class TestLayer(unittest.TestCase):
         bottom_0 = Blob()
         bottom_1 = Blob()
 
-        bottom_0.set_data([1.0,2.0,3.0,4.0,5.0,6.0])
-        bottom_1.set_data([1.0,0.0,0.0,0.0,0.0,0.0])
+        bottom_0.Reshape([2,6])
+        bottom_1.Reshape([2,6])
 
-        bottom_0.Reshape([1,6])
-        bottom_1.Reshape([1,6])
+        bottom_0.set_data([1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0])
+        bottom_1.set_data([1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0])
+
+        bottom_0.Reshape([2,6])
+        bottom_1.Reshape([2,6])
 
         top = Blob()
         top1 = Blob()
@@ -44,18 +47,18 @@ class TestLayer(unittest.TestCase):
 
         layer = SoftmaxLossLayer()
 
-        for i in range(10):
+        for i in range(1):
             layer.Setup([bottom_0, bottom_1], [top,top1])
             layer.Forward([bottom_0, bottom_1], [top,top1])
             print 'SoftmaxLoss:'
 
             print 'bot.data(%d):',i,bottom_0.data()
+            print 'label.data(%d):',i,bottom_1.data()
             print 'top.data(%d):',i,top.data()
-            top.set_diff(top.data())
+            print 'top1.data(%d):',i,top1.data()
+            top.set_diff(1.0)
             layer.Backward([top,top1], [], [bottom_0, bottom_1])
             print 'bot.diff(%d):',i,bottom_0.diff()
-            bottom_0.set_diff(bottom_0.diff()*(0.01))
-            bottom_0.Update()
 
     def test_ConvolutionLayer(self):
         bottom = Blob()
@@ -88,6 +91,8 @@ class TestLayer(unittest.TestCase):
     def test_InnerProductLayer(self):
         bottom = Blob()
         top    = Blob()
+        
+        bottom.Reshape((1,2))
         bottom.set_data([1,2])
         bottom.Reshape((1,2))
        
