@@ -28,6 +28,37 @@ class TestLayer(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_ReLULayer(self):
+        bottom_0 = Blob()
+
+        bottom_0.Reshape([2,6])
+
+        bottom_0.set_data([-1.0,2.0,-3.0,4.0,-5.0,6.0,-1.0,2.0,-3.0,4.0,-5.0,6.0])
+
+        bottom_0.Reshape([2,6])
+
+        top = Blob()
+
+        top.Reshape([2,6])
+
+        top.set_diff([1.0,-2.0,3.0,-4.0,5.0,-6.0,1.0,-2.0,3.0,-4.0,5.0,-6.0])
+
+        top.Reshape([2,6])
+
+        layer = ReLULayer()
+
+        for i in range(1):
+            layer.Setup([bottom_0], [top])
+            layer.Forward([bottom_0], [top])
+            print 'ReLU:'
+
+            print 'bot.data(%d):',i,bottom_0.data()
+            print 'top.data(%d):',i,top.data()
+            #top.set_diff([1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0])
+            layer.Backward([top], [], [bottom_0])
+            print 'top.diff(%d):',i,top.diff()
+            print 'bot.diff(%d):',i,bottom_0.diff()
+
     def test_SoftmaxLossLayer(self):
         bottom_0 = Blob()
         bottom_1 = Blob()
