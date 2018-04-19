@@ -4,11 +4,8 @@ import numpy
 
 class InnerProductLayer(Layer):
 
-    def __init__(self, M, K, N):
+    def __init__(self, K, N):
         Layer.__init__(self)
-
-        # batch size
-        self.M_ = M
 
         # input number of neuron
         self.K_ = K
@@ -26,6 +23,8 @@ class InnerProductLayer(Layer):
         self.blobs_.append(self.b)
 
     def LayerSetup(self, bottom, top):
+        self.M_ = bottom[0].data().shape[0]
+
         W_shape = (self.K_, self.N_)
         b_shape = (self.M_, self.N_)
 

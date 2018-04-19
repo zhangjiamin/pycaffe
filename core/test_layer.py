@@ -127,7 +127,7 @@ class TestLayer(unittest.TestCase):
         bottom.set_data([1,2])
         bottom.Reshape((1,2))
        
-        layer  = InnerProductLayer(1,2,2)
+        layer  = InnerProductLayer(2,2)
         layer.Setup([bottom], [top])
         layer.Forward([bottom], [top])
         top.set_diff(top.data())
@@ -209,10 +209,10 @@ class TestLayer(unittest.TestCase):
 
         batch_size = 100
 
-        fc1  = InnerProductLayer(batch_size,784,392)
+        fc1  = InnerProductLayer(784,392)
         relu = ReLULayer()
         drop = DropoutLayer(1.0)
-        fc2  = InnerProductLayer(batch_size,392,10)
+        fc2  = InnerProductLayer(392,10)
         softmaxloss = SoftmaxLossLayer()
 
         layers.append(fc1)
@@ -334,10 +334,10 @@ class TestLayer(unittest.TestCase):
         train = MNISTTrainDataLayer(batch_size)
         acc   = AccuracyLayer()
 
-        fc1  = InnerProductLayer(batch_size,784,392)
+        fc1  = InnerProductLayer(784,392)
         relu = ReLULayer()
         drop = DropoutLayer(1.0)
-        fc2  = InnerProductLayer(batch_size,392,10)
+        fc2  = InnerProductLayer(392,10)
         softmaxloss = SoftmaxLossLayer()
 
         train_net.AddLayer(train, [], [bottom,label])
@@ -422,10 +422,10 @@ class TestLayer(unittest.TestCase):
         train = MNISTTrainDataLayer(batch_size)
         acc   = AccuracyLayer()
 
-        fc1  = InnerProductLayer(batch_size,784,300)
+        fc1  = InnerProductLayer(784,300)
         relu = ReLULayer()
         drop = DropoutLayer(1.0)
-        fc2  = InnerProductLayer(batch_size,300,10)
+        fc2  = InnerProductLayer(300,10)
         softmaxloss = SoftmaxLossLayer()
 
         train_net.AddLayer(train, [], [bottom,label])
