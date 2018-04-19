@@ -50,8 +50,7 @@ class NesterovSolver(SGDSolver):
         param = self.net_.learnable_params()[param_id]
         history = self.history_[param_id]
         update = 1.0*history.data()
-        param2 = np.square(param.diff())
-        history.set_data(history.data() + param2)
-        his_sqrt = rate/(np.sqrt(history.data()) + self.delta_)
-        param.set_diff( his_sqrt*param.diff() )
+        history.set_data( rate*param.diff() + 0.9*history.data() )
+        update = (1.0 + 0.9)*history.data() - 0.9*update
+        param.set_diff( update )
 

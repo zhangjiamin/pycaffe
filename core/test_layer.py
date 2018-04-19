@@ -7,6 +7,7 @@ from net import Net
 from sgd_solver import SGDSolver
 from adagrad_solver import AdaGradSolver
 from adam_solver import AdamSolver
+from nesterov_solver import NesterovSolver
 
 from accuracy_layer import AccuracyLayer
 #from mnist_train_data_layer import MNISTTrainDataLayer
@@ -206,7 +207,7 @@ class TestLayer(unittest.TestCase):
         test_net.AddOutputBlob(top6)
         test_net.AddOutputBlob(top7)
 
-        solver = AdamSolver(0.001)
+        solver = NesterovSolver(0.001)
         solver.AddTrainNet(train_net)
         solver.AddTestNet(test_net)
         solver.Solve(50000)
