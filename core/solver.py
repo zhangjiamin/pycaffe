@@ -27,8 +27,10 @@ class Solver:
                 self.Test()
             self.net_.ClearParamDiffs()
             self.net_.ForwardBackward()
-            self.ApplyUpdate()
+
             self.iter_ += 1
+
+            self.ApplyUpdate()
 
     def net(self):
         return self.net_
