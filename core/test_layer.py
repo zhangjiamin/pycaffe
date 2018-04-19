@@ -446,7 +446,7 @@ class TestLayer(unittest.TestCase):
         test_net.AddOutputBlob(top6)
         test_net.AddOutputBlob(top7)
 
-        solver = SGDSolver()
+        solver = AdaGradSolver(0.01)
         solver.AddTrainNet(train_net)
         solver.AddTestNet(test_net)
         solver.Solve(50000)

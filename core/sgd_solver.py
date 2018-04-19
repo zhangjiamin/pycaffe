@@ -3,9 +3,9 @@ from solver import Solver
 
 class SGDSolver(Solver):
 
-    def __init__(self):
+    def __init__(self, lr):
         Solver.__init__(self)
-        self.lr_ = 0.01
+        self.lr_ = lr
         self.momentum_ = 0.9
         self.history_ = []
 

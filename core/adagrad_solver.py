@@ -5,9 +5,8 @@ from sgd_solver import SGDSolver
 
 class AdaGradSolver(SGDSolver):
 
-    def __init__(self):
-        SGDSolver.__init__(self)
-        self.lr_ = 0.3
+    def __init__(self, lr):
+        SGDSolver.__init__(self, lr)
         self.delta_ = 1e-8
 
     def type(self):
@@ -52,7 +51,6 @@ class AdaGradSolver(SGDSolver):
         history = self.history_[param_id]
         param2 = np.square(param.diff())
         history.set_data(history.data() + param2)
-        his_sqrt = self.lr_/(np.sqrt(history.data()) + self.delta_)
+        his_sqrt = rate/(np.sqrt(history.data()) + self.delta_)
         param.set_diff( his_sqrt*param.diff() )
-
 
