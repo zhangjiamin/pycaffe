@@ -38,7 +38,8 @@ class InnerProductLayer(Layer):
         n = (fan_in + fan_out)/2
 
         scale  = numpy.sqrt(3.0/n)
-        self.W.set_data(numpy.random.uniform(-scale, scale, self.W.count()) )
+        #self.W.set_data(numpy.random.uniform(-scale, scale, self.W.count()) )
+        self.W.set_data(numpy.random.normal(loc=0.0, scale=0.1, size=self.W.count()) )
         self.W.Reshape(W_shape)
 
     def Reshape(self, bottom, top):

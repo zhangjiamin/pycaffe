@@ -425,7 +425,8 @@ class TestLayer(unittest.TestCase):
 
         fc1  = InnerProductLayer(784,300)
         relu = ReLULayer()
-        drop = DropoutLayer(1.0)
+        drop = DropoutLayer(0.75)
+        drop2 = DropoutLayer(1.0)
         fc2  = InnerProductLayer(300,10)
         softmaxloss = SoftmaxLossLayer()
 
@@ -439,7 +440,7 @@ class TestLayer(unittest.TestCase):
         test_net.AddLayer(test, [], [bottom,label])
         test_net.AddLayer(fc1, [bottom], [top])
         test_net.AddLayer(relu, [top], [top1])
-        test_net.AddLayer(drop, [top1], [top4])
+        test_net.AddLayer(drop2, [top1], [top4])
         test_net.AddLayer(fc2, [top4], [top2])
         test_net.AddLayer(softmaxloss, [top2,label], [loss,top5])
         test_net.AddLayer(acc, [top5,label], [top6,top7])
