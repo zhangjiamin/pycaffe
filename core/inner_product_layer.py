@@ -61,3 +61,4 @@ class InnerProductLayer(Layer):
     def Backward_cpu(self, top, propagate_down, bottom):
         self.W.set_diff( self.W.diff() + numpy.matmul(bottom[0].data().transpose(), top[0].diff()) )
         self.b.set_diff( self.b.diff() + top[0].diff() )
+        bottom[0].set_diff( numpy.matmul(top[0].diff(), self.W.data().transpose()) )
