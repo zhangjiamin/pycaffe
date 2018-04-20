@@ -75,14 +75,17 @@ class AdaDeltaSolver(SGDSolver):
 
         update.set_data( history1.data() + delta )
 
-        s = self.s_[param_id]    
-        r = self.r_[param_id]
-        s.set_data(self.b1_*s.data() + (1.0-self.b1_)*update )
-        update = s.data() + self.delta_
+        temp.set_data( history.data() + delta )
 
-        r.set_data(self.b2_*r.data() + (1.0-self.b2_)*np.square(param.diff()))
-        s_ = s.data()/(1.0-np.power(self.b1_,(self.iter_)))
-        r_ = r.data()/(1.0-np.power(self.b2_,(self.iter_)))
-        runing_lr = rate*s_/(np.sqrt(r_)+self.delta_)       
-        param.set_diff( runing_lr )
+        update.set_data( updata.data()/temp.data() )
+
+        update.set_data( np.sqrt(update.data()) )
+
+        param.set_diff( param.diff()*update.data() )
+
+        update.set_data( np.square(param.diff() )
+
+        history1.set_data( (1.0 - self.momentum_)*update.data() + self.momentum_*history1.data() )
+
+        param.set_diff( rate*param.diff() )
 
