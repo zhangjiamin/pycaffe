@@ -61,7 +61,20 @@ class AdaDeltaSolver(SGDSolver):
 
     def ComputeUpdateValue(self, param_id, rate):
         param = self.net_.learnable_params()[param_id]
-        update = np.square(param.diff())
+        update = self.update_[param_id]
+        history = self.history_[param_id]
+        temp = self.temp_[param_id]
+        update.set_data( np.square(param.diff()) )
+        history.set_data( self.momentum_*history.data() + (1.0-self.momentum_)*update.data() )
+        
+        delta = self.delta_
+
+        update_history_offset = len(self.net_.learnable_params())
+
+        history1 = self.history_[update_history_offset + param_id]
+
+        update.set_data( history1.data() + delta )
+
         s = self.s_[param_id]    
         r = self.r_[param_id]
         s.set_data(self.b1_*s.data() + (1.0-self.b1_)*update )
