@@ -211,7 +211,7 @@ class TestLayer(unittest.TestCase):
         solver = AdamSolver(0.001)
         solver.AddTrainNet(train_net)
         solver.AddTestNet(test_net)
-        solver.Solve(50000)
+        solver.Solve(3000)
 
 if __name__ == '__main__':
     unittest.main()
