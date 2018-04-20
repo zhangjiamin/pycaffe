@@ -10,7 +10,7 @@ class NesterovSolver(SGDSolver):
         self.delta_ = 1e-8
 
     def type(self):
-        return 'AdaGrad'
+        return 'Nesterov'
 
     def AddTrainNet(self, net):
         Solver.AddTrainNet(self, net)

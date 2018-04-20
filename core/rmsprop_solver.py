@@ -10,7 +10,7 @@ class RMSPropSolver(SGDSolver):
         self.delta_ = 1e-8
 
     def type(self):
-        return 'AdaGrad'
+        return 'RMSProp'
 
     def AddTrainNet(self, net):
         Solver.AddTrainNet(self, net)

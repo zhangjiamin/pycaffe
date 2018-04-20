@@ -8,24 +8,30 @@ class AdaDeltaSolver(SGDSolver):
     def __init__(self, lr):
         SGDSolver.__init__(self, lr)
         self.delta_ = 1e-8
-        self.s_ = []
-        self.r_ = []
-        self.b1_ = 0.9
-        self.b2_ = 0.999
+        self.history_ = []
+        self.update_ = []
+        self.temp_ = []
+        self.momentum_ = 0.9
 
     def type(self):
-        return 'Adam'
+        return 'AdaDelta'
 
     def AddTrainNet(self, net):
         Solver.AddTrainNet(self, net)
         params = self.net_.learnable_params()
         for i in range(len(params)):
-            s = Blob()
-            r = Blob()
-            s.ReshapeLike(params[i])
-            r.ReshapeLike(params[i])
-            self.s_.append(s)
-            self.r_.append(r)
+            h1 = Blob()
+            h2 = Blob()
+            u = Blob()
+            t = Blob()
+            h1.ReshapeLike(params[i])
+            h2.ReshapeLike(params[i])
+            u.ReshapeLike(params[i])
+            t.ReshapeLike(params[i])
+            self.history_.append(h1)
+            self.history_.append(h2)
+            self.update_.append(u)
+            self.temp_.append(t)
 
     def ApplyUpdate(self):
         rate = self.GetLearningRate()
