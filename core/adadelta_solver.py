@@ -20,18 +20,17 @@ class AdaDeltaSolver(SGDSolver):
         Solver.AddTrainNet(self, net)
         params = self.net_.learnable_params()
         for i in range(len(params)):
-            h1 = Blob()
-            h2 = Blob()
+            h = Blob()
             u = Blob()
             t = Blob()
-            h1.ReshapeLike(params[i])
-            h2.ReshapeLike(params[i])
+            h.ReshapeLike(params[i])
             u.ReshapeLike(params[i])
             t.ReshapeLike(params[i])
-            self.history_.append(h1)
-            self.history_.append(h2)
+            self.history_.append(h)
             self.update_.append(u)
             self.temp_.append(t)
+
+        self.history_.extend(self.history_)
 
     def ApplyUpdate(self):
         rate = self.GetLearningRate()
@@ -77,13 +76,13 @@ class AdaDeltaSolver(SGDSolver):
 
         temp.set_data( history.data() + delta )
 
-        update.set_data( updata.data()/temp.data() )
+        update.set_data( update.data()/temp.data() )
 
         update.set_data( np.sqrt(update.data()) )
 
         param.set_diff( param.diff()*update.data() )
 
-        update.set_data( np.square(param.diff() )
+        update.set_data( np.square(param.diff()) )
 
         history1.set_data( (1.0 - self.momentum_)*update.data() + self.momentum_*history1.data() )
 
