@@ -135,26 +135,48 @@ class TestLayer(unittest.TestCase):
     def test_InnerProductLayer(self):
         bottom = Blob()
         top    = Blob()
-        
+        top1   = Blob()
+
+        btd    = Blob()
+        wwd    = Blob()
+        bbd    = Blob()
+       
+        bbd.Reshape((1,2))
+        bbd.set_data([2,2])
+        bbd.Reshape((1,2))
+
+        wwd.Reshape((3,2))
+        wwd.set_data([5,5,7,7,9,9])
+        wwd.Reshape((3,2))
+
+        btd.Reshape((2,3))
+        btd.set_data([3,7,11,3,7,11])
+        btd.Reshape((2,3))
+
         bottom.Reshape((2,3))
         bottom.set_data([1,2,3,4,5,6])
         bottom.Reshape((2,3))
        
         layer  = InnerProductLayer(3,2)
         layer.Setup([bottom], [top])
+
+        layer.W.set_data([1,2,3,4,5,6])
+        layer.W.Reshape((3,2))
+
+        top1.Reshape((2,2))
+        top1.set_data([22,28,49,64])
+        top1.Reshape((2,2))
+
         layer.Forward([bottom], [top])
-        top.set_diff(top.data())
+        np.testing.assert_array_almost_equal( top.data(), top1.data() )
+
+        top.set_diff([1,1,1,1])
+        top.Reshape((2,2))
         layer.Backward([top], [], [bottom])
 
-        print 'InnerProductLayer:'
-        print 'bottom',bottom.data(),bottom.data().shape
-        print 'top',top.data(),top.data().shape
-        print 'W',layer.W.data(),layer.W.data().shape
-        print 'b',layer.b.data(),layer.b.data().shape
-        print 'top.diff',top.diff(),top.data().shape
-        print 'W.diff',layer.W.diff(),layer.W.data().shape
-        print 'b.diff',layer.b.diff(),layer.b.data().shape
-        print 'bottom.diff',bottom.diff(),bottom.data().shape
+        np.testing.assert_array_almost_equal( layer.b.diff(), bbd.data() )
+        np.testing.assert_array_almost_equal( layer.W.diff(), wwd.data() )
+        np.testing.assert_array_almost_equal( bottom.diff(), btd.data() )
 
     def test_ConvolutionLayer(self):
         bottom = Blob()
