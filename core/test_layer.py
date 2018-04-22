@@ -181,30 +181,32 @@ class TestLayer(unittest.TestCase):
     def test_ConvolutionLayer(self):
         bottom = Blob()
         top    = Blob()
-        bottom.set_data(range(3*28*28))
-        bottom.Reshape((1,3,28,28))
+
+        bottom.Reshape((1,1,5,5))
+        bottom.set_data([1,1,1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,0,0,1,1,0,0])
+        bottom.Reshape((1,1,5,5))
        
         layer  = ConvolutionLayer(3,3,1,0,1)
         layer.Setup([bottom], [top])
+        layer.W.set_data([1,0,1,0,1,0,1,0,1])
+        layer.W.Reshape((1,1,3,3))
         layer.Forward([bottom], [top])
-
-        layer1 = MaxPoolingLayer(2, 2, 1)
-        top1   = Blob()
-
-        layer1.Forward([top], [top1])
-        top1.set_diff(top1.data())
-        layer1.Backward([top1], [], [top])
         layer.Backward([top], [], [bottom])
 
-        print 'bottom',bottom.data(),bottom.data().shape
-        print 'top',top.data(),top.data().shape
-        print 'top1:',top1.data(),top1.data().shape
-        print 'W',layer.W.data(),layer.W.data().shape
-        print 'b',layer.b.data(),layer.b.data().shape
-        print 'top1.diff',top1.diff(),top1.data().shape
-        print 'top.diff',top.diff(),top.data().shape
-        print 'W.diff',layer.W.diff(),layer.W.data().shape
-        print 'b.diff',layer.b.diff(),layer.b.data().shape
+        print 'bottom:'
+        print bottom.data(),bottom.data().shape
+        print 'top:'
+        print top.data(),top.data().shape
+        print 'W:'
+        print layer.W.data(),layer.W.data().shape
+        print 'b:'
+        print layer.b.data(),layer.b.data().shape
+        print 'top.diff:'
+        print top.diff(),top.data().shape
+        print 'W.diff:'
+        print layer.W.diff(),layer.W.data().shape
+        print 'b.diff:'
+        print layer.b.diff(),layer.b.data().shape
 
 if __name__ == '__main__':
     unittest.main()

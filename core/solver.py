@@ -55,5 +55,5 @@ class Solver:
             count = count + self.test_net_.output_blobs()[0].data()
             total = total + self.test_net_.output_blobs()[1].data()
    
-        print 'Accuracy:',count*1.0/total
+        print 'Accuracy:',count*1.0/total*100,'%'
  
