@@ -74,24 +74,30 @@ class TestLayer(unittest.TestCase):
         bottom_0.Reshape([2,6])
         bottom_1.Reshape([2,6])
 
-        top = Blob()
+        top0 = Blob()
         top1 = Blob()
-        top.set_diff(10.0)
+
+        top3 = Blob()
+        top4 = Blob()
+        top3.Reshape([2,6])
+        top4.Reshape([2,6])
+
+        top3.set_diff([-0.49786511,0.00580323,0.01577482,0.0428804,0.116561,0.31684566,-0.49786511,0.00580323,0.01577482,0.0428804,0.116561,0.31684566])
+        top4.set_data([0.00426978, 0.01160646, 0.03154963, 0.08576079, 0.23312201,0.63369132,0.00426978, 0.01160646, 0.03154963, 0.08576079, 0.23312201,0.63369132])
+        top3.Reshape([2,6])
+        top4.Reshape([2,6])
 
         layer = SoftmaxLossLayer()
 
-        for i in range(1):
-            layer.Setup([bottom_0, bottom_1], [top,top1])
-            layer.Forward([bottom_0, bottom_1], [top,top1])
-            print 'SoftmaxLoss:'
+        layer.Setup([bottom_0, bottom_1], [top0,top1])
+        layer.Forward([bottom_0, bottom_1], [top0,top1])
 
-            print 'bot.data(%d):',i,bottom_0.data()
-            print 'label.data(%d):',i,bottom_1.data()
-            print 'top.data(%d):',i,top.data()
-            print 'top1.data(%d):',i,top1.data()
-            top.set_diff(1.0)
-            layer.Backward([top,top1], [], [bottom_0, bottom_1])
-            print 'bot.diff(%d):',i,bottom_0.diff()
+        np.testing.assert_array_almost_equal( top1.data(), top4.data() )
+
+        top0.set_diff(1.0)
+        layer.Backward([top0,top1], [], [bottom_0, bottom_1])
+
+        np.testing.assert_array_almost_equal( bottom_0.diff(), top3.diff() )
 
     def test_ConvolutionLayer(self):
         bottom = Blob()
@@ -210,7 +216,7 @@ class TestLayer(unittest.TestCase):
         solver = AdaDeltaSolver(0.1)
         solver.AddTrainNet(train_net)
         solver.AddTestNet(test_net)
-        solver.Solve(3000)
+        solver.Solve(300)
 
 if __name__ == '__main__':
     unittest.main()
