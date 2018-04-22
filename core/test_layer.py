@@ -99,6 +99,68 @@ class TestLayer(unittest.TestCase):
 
         np.testing.assert_array_almost_equal( bottom_0.diff(), top3.diff() )
 
+    def test_SoftMaxLayer(self):
+        bottom = Blob()
+        top0    = Blob()
+        top1    = Blob()
+        top2    = Blob()
+        top3    = Blob()
+
+        bottom.Reshape((3,))
+        bottom.set_data([1,2,3])
+        bottom.Reshape((3,))
+        top0.Reshape((3,))
+        top1.Reshape((3,))
+        top2.Reshape((3,))
+        top3.Reshape((3,))
+
+        top1.set_data([0.09003057, 0.24472847, 0.66524096])
+        top1.Reshape((3,))
+        top2.set_data([1.0, 1.0, 1.0])
+        top2.Reshape((3,))
+        top3.set_data([0.0, 0.0, 0.0])
+        top3.Reshape((3,))
+
+        layer  = SoftMaxLayer()
+        layer.Setup([bottom], [top0])
+        layer.Forward([bottom], [top0])
+
+        np.testing.assert_array_almost_equal( top0.data(), top1.data() )
+
+        top0.set_diff(top2.data())
+        layer.Backward([top0], [], [bottom])
+        
+        np.testing.assert_array_almost_equal( bottom.diff(), top3.data() )
+
+        print 'SoftMaxLayer:'
+        print 'bottom',bottom.data(),bottom.data().shape
+        print 'top',top0.data(),top0.data().shape
+        print 'top.diff',top0.diff(),top0.data().shape
+        print 'bottom.diff',bottom.diff(),bottom.diff().shape
+
+    def test_InnerProductLayer(self):
+        bottom = Blob()
+        top    = Blob()
+        
+        bottom.Reshape((1,2))
+        bottom.set_data([1,2])
+        bottom.Reshape((1,2))
+       
+        layer  = InnerProductLayer(2,2)
+        layer.Setup([bottom], [top])
+        layer.Forward([bottom], [top])
+        top.set_diff(top.data())
+        layer.Backward([top], [], [bottom])
+
+        print 'InnerProductLayer:'
+        print 'bottom',bottom.data(),bottom.data().shape
+        print 'top',top.data(),top.data().shape
+        print 'W',layer.W.data(),layer.W.data().shape
+        print 'b',layer.b.data(),layer.b.data().shape
+        print 'top.diff',top.diff(),top.data().shape
+        print 'W.diff',layer.W.diff(),layer.W.data().shape
+        print 'b.diff',layer.b.diff(),layer.b.data().shape
+
     def test_ConvolutionLayer(self):
         bottom = Blob()
         top    = Blob()
@@ -126,46 +188,6 @@ class TestLayer(unittest.TestCase):
         print 'top.diff',top.diff(),top.data().shape
         print 'W.diff',layer.W.diff(),layer.W.data().shape
         print 'b.diff',layer.b.diff(),layer.b.data().shape
-
-    def test_InnerProductLayer(self):
-        bottom = Blob()
-        top    = Blob()
-        
-        bottom.Reshape((1,2))
-        bottom.set_data([1,2])
-        bottom.Reshape((1,2))
-       
-        layer  = InnerProductLayer(2,2)
-        layer.Setup([bottom], [top])
-        layer.Forward([bottom], [top])
-        top.set_diff(top.data())
-        layer.Backward([top], [], [bottom])
-
-        print 'InnerProductLayer:'
-        print 'bottom',bottom.data(),bottom.data().shape
-        print 'top',top.data(),top.data().shape
-        print 'W',layer.W.data(),layer.W.data().shape
-        print 'b',layer.b.data(),layer.b.data().shape
-        print 'top.diff',top.diff(),top.data().shape
-        print 'W.diff',layer.W.diff(),layer.W.data().shape
-        print 'b.diff',layer.b.diff(),layer.b.data().shape
-
-    def test_SoftMaxLayer(self):
-        bottom = Blob()
-        top    = Blob()
-        bottom.set_data([1,2,3])
-        bottom.Reshape((3,))
-
-        layer  = SoftMaxLayer()
-        layer.Setup([bottom], [top])
-        layer.Forward([bottom], [top])
-        top.set_diff(top.data())
-        layer.Backward([top], [], [bottom])
-
-        print 'bottom',bottom.data(),bottom.data().shape
-        print 'top',top.data(),top.data().shape
-        print 'top.diff',top.diff(),top.data().shape
-        print 'bottom.diff',bottom.diff(),bottom.diff().shape
 
     def test_mnist_mlp_net_solver(self):
         train_net = Net()

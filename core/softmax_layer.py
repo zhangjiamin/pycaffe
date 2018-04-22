@@ -28,7 +28,6 @@ class SoftMaxLayer(Layer):
         top_diff = top[0].diff()
 
         dot      = numpy.dot(top_data, top_diff)
-        top_diff = top_diff - dot
-
-        bottom[0].set_diff( numpy.multiply(top_data, top_diff) )
+        topdiff  = top_diff - dot
+        bottom[0].set_diff( numpy.multiply(top_data, topdiff) )
 
