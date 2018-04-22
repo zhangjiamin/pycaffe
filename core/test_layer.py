@@ -132,12 +132,6 @@ class TestLayer(unittest.TestCase):
         
         np.testing.assert_array_almost_equal( bottom.diff(), top3.data() )
 
-        print 'SoftMaxLayer:'
-        print 'bottom',bottom.data(),bottom.data().shape
-        print 'top',top0.data(),top0.data().shape
-        print 'top.diff',top0.diff(),top0.data().shape
-        print 'bottom.diff',bottom.diff(),bottom.diff().shape
-
     def test_InnerProductLayer(self):
         bottom = Blob()
         top    = Blob()
