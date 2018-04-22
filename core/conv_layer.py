@@ -44,7 +44,8 @@ class ConvolutionLayer(BaseConvolutionLayer):
         top[0].set_data(out)
 
     def Backward_cpu(self, top, propagate_down, bottom):
-        dw, db, _ = conv_backward_naive(bottom[0].data(), self.W.data(), self.b.data(), top[0].diff(), self.pad, self.stride)
+        dw, db, dx = conv_backward_naive(bottom[0].data(), self.W.data(), self.b.data(), top[0].diff(), self.pad, self.stride)
         self.W.set_diff(dw)
         self.b.set_diff(db)
+        bottom[0].set_diff(dx)
 
