@@ -181,32 +181,48 @@ class TestLayer(unittest.TestCase):
     def test_ConvolutionLayer(self):
         bottom = Blob()
         top    = Blob()
+        top1   = Blob()
+        top2   = Blob()
+        top3   = Blob()
+        top4   = Blob()
 
-        bottom.Reshape((1,1,5,5))
-        bottom.set_data([1,1,1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,0,0,1,1,0,0])
-        bottom.Reshape((1,1,5,5))
-       
-        layer  = ConvolutionLayer(3,3,1,0,1)
+        bottom.Reshape((1,1,4,4))
+        bottom.set_data([1,1,0,1,1,0,0,1,0,1,1,0,1,1,1,1])
+        bottom.Reshape((1,1,4,4))
+
+        top1.Reshape((1,1,3,3))
+        top1.set_data([2,1,1,2,2,1,2,3,3])
+        top1.Reshape((1,1,3,3))
+
+        top2.Reshape((1,1,2,2))
+        top2.set_data([5,5,6,6])
+        top2.Reshape((1,1,2,2))
+
+        top3.Reshape((1,1,4,4))
+        top3.set_data([1,1,1,0,2,3,3,1,2,3,3,1,1,2,2,1])
+        top3.Reshape((1,1,4,4))
+
+        top4.Reshape((1,))
+        top4.set_data([9])
+        top4.Reshape((1,))
+     
+        layer  = ConvolutionLayer(2,2,1,0,1)
         layer.Setup([bottom], [top])
-        layer.W.set_data([1,0,1,0,1,0,1,0,1])
-        layer.W.Reshape((1,1,3,3))
+        layer.W.set_data([1,0,1,1])
+        layer.W.Reshape((1,1,2,2))
         layer.Forward([bottom], [top])
+
+        np.testing.assert_array_almost_equal( top.data(), top1.data() )
+
+        top.set_diff([1,1,1,1,1,1,1,1,1])
+        top.Reshape((1,1,3,3))
+       
         layer.Backward([top], [], [bottom])
 
-        print 'bottom:'
-        print bottom.data(),bottom.data().shape
-        print 'top:'
-        print top.data(),top.data().shape
-        print 'W:'
-        print layer.W.data(),layer.W.data().shape
-        print 'b:'
-        print layer.b.data(),layer.b.data().shape
-        print 'top.diff:'
-        print top.diff(),top.data().shape
-        print 'W.diff:'
-        print layer.W.diff(),layer.W.data().shape
-        print 'b.diff:'
-        print layer.b.diff(),layer.b.data().shape
+        np.testing.assert_array_almost_equal( layer.W.diff(), top2.data() )
+        np.testing.assert_array_almost_equal( layer.b.diff(), top4.data() )
+        np.testing.assert_array_almost_equal( bottom.diff(), top3.data() )
+
 
 if __name__ == '__main__':
     unittest.main()
