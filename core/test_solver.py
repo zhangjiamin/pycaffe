@@ -82,7 +82,7 @@ class TestLayer(unittest.TestCase):
         solver = AdaDeltaSolver(0.1)
         solver.AddTrainNet(train_net)
         solver.AddTestNet(test_net)
-        solver.Solve(300)
+        solver.Solve(3000)
 
 if __name__ == '__main__':
     unittest.main()

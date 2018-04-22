@@ -26,7 +26,7 @@ class InnerProductLayer(Layer):
         self.M_ = bottom[0].data().shape[0]
 
         W_shape = (self.K_, self.N_)
-        b_shape = (self.M_, self.N_)
+        b_shape = (1, self.N_)
 
         self.W.Reshape(W_shape)
         self.b.Reshape(b_shape)
@@ -60,5 +60,5 @@ class InnerProductLayer(Layer):
 
     def Backward_cpu(self, top, propagate_down, bottom):
         self.W.set_diff( self.W.diff() + numpy.matmul(bottom[0].data().transpose(), top[0].diff()) )
-        self.b.set_diff( self.b.diff() + top[0].diff() )
+        self.b.set_diff( self.b.diff() + numpy.sum(top[0].diff(),axis=0) )
         bottom[0].set_diff( numpy.matmul(top[0].diff(), self.W.data().transpose()) )

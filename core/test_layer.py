@@ -136,11 +136,11 @@ class TestLayer(unittest.TestCase):
         bottom = Blob()
         top    = Blob()
         
-        bottom.Reshape((1,2))
-        bottom.set_data([1,2])
-        bottom.Reshape((1,2))
+        bottom.Reshape((2,3))
+        bottom.set_data([1,2,3,4,5,6])
+        bottom.Reshape((2,3))
        
-        layer  = InnerProductLayer(2,2)
+        layer  = InnerProductLayer(3,2)
         layer.Setup([bottom], [top])
         layer.Forward([bottom], [top])
         top.set_diff(top.data())
@@ -154,6 +154,7 @@ class TestLayer(unittest.TestCase):
         print 'top.diff',top.diff(),top.data().shape
         print 'W.diff',layer.W.diff(),layer.W.data().shape
         print 'b.diff',layer.b.diff(),layer.b.data().shape
+        print 'bottom.diff',bottom.diff(),bottom.data().shape
 
     def test_ConvolutionLayer(self):
         bottom = Blob()
