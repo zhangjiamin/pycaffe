@@ -34,32 +34,34 @@ class TestLayer(unittest.TestCase):
         pass
 
     def test_ReLULayer(self):
-        bottom_0 = Blob()
-        bottom_1 = Blob()
-        bottom_0.Reshape([2,6])
-        bottom_1.Reshape([2,6])
-        bottom_0.set_data([-1.0,2.0,-3.0,4.0,-5.0,6.0,-1.0,2.0,-3.0,4.0,-5.0,6.0])
-        bottom_1.set_data([0.0,2.0,0.0,4.0,0.0,6.0,0.0,2.0,0.0,4.0,0.0,6.0])
-        bottom_0.Reshape([2,6])
-        bottom_1.Reshape([2,6])
+        bot0 = Blob()
+        bot0.Reshape([2,6])
+        bot0.set_data([-1.0,2.0,-3.0,4.0,-5.0,6.0,-1.0,2.0,-3.0,4.0,-5.0,6.0])
+        bot0.Reshape([2,6])
+
+        expect_top0 = Blob()
+        expect_top0.Reshape([2,6])
+        expect_top0.set_data([0.0,2.0,0.0,4.0,0.0,6.0,0.0,2.0,0.0,4.0,0.0,6.0])
+        expect_top0.Reshape([2,6])
 
         top0 = Blob()
-        top1 = Blob()
         top0.Reshape([2,6])
-        top1.Reshape([2,6])
         top0.set_diff([1.0,-2.0,3.0,-4.0,5.0,-6.0,1.0,-2.0,3.0,-4.0,5.0,-6.0])
         top0.Reshape([2,6])
-        top1.set_diff([0.0,-2.0,0.0,-4.0,0.0,-6.0,0.0,-2.0,0.0,-4.0,0.0,-6.0])
-        top1.Reshape([2,6])
+
+        expect_bot0 = Blob()
+        expect_bot0.Reshape([2,6])
+        expect_bot0.set_diff([0.0,-2.0,0.0,-4.0,0.0,-6.0,0.0,-2.0,0.0,-4.0,0.0,-6.0])
+        expect_bot0.Reshape([2,6])
 
         layer = ReLULayer()
 
-        layer.Setup([bottom_0], [top0])
-        layer.Forward([bottom_0], [top0])
-        np.testing.assert_array_equal( top0.data(), bottom_1.data() )
+        layer.Setup([bot0], [top0])
+        layer.Forward([bot0], [top0])
+        np.testing.assert_array_equal( expect_top0.data(), top0.data() )
 
-        layer.Backward([top0], [], [bottom_0])
-        np.testing.assert_array_equal( bottom_0.diff(), top1.diff() )
+        layer.Backward([top0], [], [bot0])
+        np.testing.assert_array_equal( expect_bot0.diff(), bot0.diff() )
 
     def test_SoftmaxLossLayer(self):
         bottom_0 = Blob()
@@ -178,7 +180,7 @@ class TestLayer(unittest.TestCase):
         np.testing.assert_array_almost_equal( layer.W.diff(), wwd.data() )
         np.testing.assert_array_almost_equal( bottom.diff(), btd.data() )
 
-    def test_ConvolutionLayer(self):
+    def test_MaxPoolingLayer(self):
         bottom = Blob()
         top    = Blob()
         top1   = Blob()
@@ -214,7 +216,7 @@ class TestLayer(unittest.TestCase):
         layer.Backward([top], [], [bottom])
         np.testing.assert_array_almost_equal( bottom.diff(), top3.data() )
 
-    def test_MaxPoolingLayer(self):
+    def test_ConvolutionLayer(self):
         bottom = Blob()
         top    = Blob()
         top1   = Blob()
