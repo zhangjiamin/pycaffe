@@ -67,15 +67,13 @@ class TestLayer(unittest.TestCase):
 
     def test_SoftmaxLossLayer(self):
         bot0 = Blob()
-        bot1 = Blob()
-
         bot0.Reshape([2,6])
-        bot1.Reshape([2,6])
-
         bot0.set_data([1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0])
-        bot1.set_data([1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0])
-
         bot0.Reshape([2,6])
+
+        bot1 = Blob()
+        bot1.Reshape([2,6])
+        bot1.set_data([1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0])
         bot1.Reshape([2,6])
 
         top0 = Blob()
