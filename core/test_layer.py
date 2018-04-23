@@ -187,6 +187,42 @@ class TestLayer(unittest.TestCase):
         top4   = Blob()
 
         bottom.Reshape((1,1,4,4))
+        bottom.set_data([5,3,1,2,1,2,3,2,4,2,2,5,3,6,1,1])
+        bottom.Reshape((1,1,4,4))
+
+        top1.Reshape((1,1,2,2))
+        top1.set_data([5,3,6,5])
+        top1.Reshape((1,1,2,2))
+
+        top3.Reshape((1,1,4,4))
+        top3.set_data([1,0,0,0,0,0,0.8,0,0,0,0,0.6,0,0.4,0,0])
+        top3.Reshape((1,1,4,4))
+
+        top4.Reshape((1,))
+        top4.set_data([9])
+        top4.Reshape((1,))
+     
+        layer  = MaxPoolingLayer(2,2,2)
+        layer.Setup([bottom], [top])
+
+        layer.Forward([bottom], [top])
+        np.testing.assert_array_almost_equal( top.data(), top1.data() )
+
+        top.set_diff([1.0,0.8,0.4,0.6])
+        top.Reshape((1,1,2,2))
+       
+        layer.Backward([top], [], [bottom])
+        np.testing.assert_array_almost_equal( bottom.diff(), top3.data() )
+
+    def test_MaxPoolingLayer(self):
+        bottom = Blob()
+        top    = Blob()
+        top1   = Blob()
+        top2   = Blob()
+        top3   = Blob()
+        top4   = Blob()
+
+        bottom.Reshape((1,1,4,4))
         bottom.set_data([1,1,0,1,1,0,0,1,0,1,1,0,1,1,1,1])
         bottom.Reshape((1,1,4,4))
 
@@ -222,7 +258,6 @@ class TestLayer(unittest.TestCase):
         np.testing.assert_array_almost_equal( layer.W.diff(), top2.data() )
         np.testing.assert_array_almost_equal( layer.b.diff(), top4.data() )
         np.testing.assert_array_almost_equal( bottom.diff(), top3.data() )
-
 
 if __name__ == '__main__':
     unittest.main()
