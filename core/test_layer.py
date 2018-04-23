@@ -64,42 +64,42 @@ class TestLayer(unittest.TestCase):
         np.testing.assert_array_equal( expect_bot0.diff(), bot0.diff() )
 
     def test_SoftmaxLossLayer(self):
-        bottom_0 = Blob()
-        bottom_1 = Blob()
+        bot0 = Blob()
+        bot1 = Blob()
 
-        bottom_0.Reshape([2,6])
-        bottom_1.Reshape([2,6])
+        bot0.Reshape([2,6])
+        bot1.Reshape([2,6])
 
-        bottom_0.set_data([1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0])
-        bottom_1.set_data([1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0])
+        bot0.set_data([1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0])
+        bot1.set_data([1.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0])
 
-        bottom_0.Reshape([2,6])
-        bottom_1.Reshape([2,6])
+        bot0.Reshape([2,6])
+        bot1.Reshape([2,6])
 
         top0 = Blob()
         top1 = Blob()
 
-        top3 = Blob()
-        top4 = Blob()
-        top3.Reshape([2,6])
-        top4.Reshape([2,6])
+        expect_bot0 = Blob()
+        expect_bot0.Reshape([2,6])
+        expect_bot0.set_diff([-0.49786511,0.00580323,0.01577482,0.0428804,0.116561,0.31684566,-0.49786511,0.00580323,0.01577482,0.0428804,0.116561,0.31684566])
+        expect_bot0.Reshape([2,6])
 
-        top3.set_diff([-0.49786511,0.00580323,0.01577482,0.0428804,0.116561,0.31684566,-0.49786511,0.00580323,0.01577482,0.0428804,0.116561,0.31684566])
-        top4.set_data([0.00426978, 0.01160646, 0.03154963, 0.08576079, 0.23312201,0.63369132,0.00426978, 0.01160646, 0.03154963, 0.08576079, 0.23312201,0.63369132])
-        top3.Reshape([2,6])
-        top4.Reshape([2,6])
+        expect_top1 = Blob()
+        expect_top1.Reshape([2,6])
+        expect_top1.set_data([0.00426978, 0.01160646, 0.03154963, 0.08576079, 0.23312201,0.63369132,0.00426978, 0.01160646, 0.03154963, 0.08576079, 0.23312201,0.63369132])
+        expect_top1.Reshape([2,6])
 
         layer = SoftmaxLossLayer()
 
-        layer.Setup([bottom_0, bottom_1], [top0,top1])
-        layer.Forward([bottom_0, bottom_1], [top0,top1])
+        layer.Setup([bot0, bot1], [top0,top1])
+        layer.Forward([bot0, bot1], [top0,top1])
 
-        np.testing.assert_array_almost_equal( top1.data(), top4.data() )
+        np.testing.assert_array_almost_equal( top1.data(), expect_top1.data() )
 
         top0.set_diff(1.0)
-        layer.Backward([top0,top1], [], [bottom_0, bottom_1])
+        layer.Backward([top0,top1], [], [bot0, bot1])
 
-        np.testing.assert_array_almost_equal( bottom_0.diff(), top3.diff() )
+        np.testing.assert_array_almost_equal( bot0.diff(), expect_bot0.diff() )
 
     def test_SoftMaxLayer(self):
         bottom = Blob()
