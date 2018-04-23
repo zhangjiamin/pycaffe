@@ -34,15 +34,12 @@ class TestLayer(unittest.TestCase):
         pass
 
     def test_ReLULayer(self):
+        # top0.data = ReLU(bot0.data)
+        # bot0.diff = ReLUGrad(top0.diff) 
         bot0 = Blob()
         bot0.Reshape([2,6])
         bot0.set_data([-1.0,2.0,-3.0,4.0,-5.0,6.0,-1.0,2.0,-3.0,4.0,-5.0,6.0])
         bot0.Reshape([2,6])
-
-        expect_top0 = Blob()
-        expect_top0.Reshape([2,6])
-        expect_top0.set_data([0.0,2.0,0.0,4.0,0.0,6.0,0.0,2.0,0.0,4.0,0.0,6.0])
-        expect_top0.Reshape([2,6])
 
         top0 = Blob()
         top0.Reshape([2,6])
@@ -53,6 +50,11 @@ class TestLayer(unittest.TestCase):
         expect_bot0.Reshape([2,6])
         expect_bot0.set_diff([0.0,-2.0,0.0,-4.0,0.0,-6.0,0.0,-2.0,0.0,-4.0,0.0,-6.0])
         expect_bot0.Reshape([2,6])
+
+        expect_top0 = Blob()
+        expect_top0.Reshape([2,6])
+        expect_top0.set_data([0.0,2.0,0.0,4.0,0.0,6.0,0.0,2.0,0.0,4.0,0.0,6.0])
+        expect_top0.Reshape([2,6])
 
         layer = ReLULayer()
 
